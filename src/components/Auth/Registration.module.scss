@@ -1,0 +1,41 @@
+@import "@/styles/variables";
+
+.registration {
+    width: 30%;
+    background: $color-white-darker;
+    padding: 10% 1%;
+    margin: 10% 35%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #f28c83;
+    border-radius: 10px;
+
+    .inputField {
+        width: 70%;
+    }
+
+    .btn {
+        background: #fbba80;
+        margin: 3%;
+    }
+
+    .btnText {
+        color: #fbba80;
+        margin: 3%;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .registration {
+        width: 80%;
+        margin: 10%;
+    }
+}
+@media screen and (min-width: 480px) and (max-width: 1020px) {
+    .registration {
+        width: 50%;
+        margin: 10% 25%;
+    }
+}
