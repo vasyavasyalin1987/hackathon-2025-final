@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { Header } from "../Header/Header";
+import Footer from "../Footer/Footer";
 
 export interface ILayoutProps {
   children?: React.ReactNode;
@@ -16,6 +17,7 @@ export const Layout = ({ children }: ILayoutProps) => {
       </Head>
       <Header />
       {children}
+      <Footer />
     </>
   );
 };

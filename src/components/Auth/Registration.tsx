@@ -1,120 +1,207 @@
-import React, { useState } from "react";
-import styles from "./Registration.module.scss";
-import { TextField, Button } from "@mui/material";
+import React from "react";
+import { useFormik } from "formik";
+import * as yup from "yup";
+import {
+  TextField,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Box,
+} from "@mui/material";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { useRouter } from "next/router";
+import { API_BASE_URL } from "@/api";
 
-export const Registration = () => {
-  const [login, setLogin] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [isSub, setSub] = useState(false);
-  const [type, setType] = useState<"registration" | "enter">("registration");
-  const [errors, setErrors] = useState({
-    login: false,
-    email: false,
-    password: false,
+const registrationSchema = yup.object({
+  login: yup
+    .string()
+    .min(3, "Логин должен содержать минимум 3 символа")
+    .required("Обязательное поле"),
+  email: yup.string().email("Некорректный email"),
+  password: yup
+    .string()
+    .min(6, "Пароль должен содержать минимум 6 символов")
+    .required("Обязательное поле"),
+});
+
+const loginSchema = yup.object({
+  login: yup
+    .string()
+    .min(3, "Логин должен содержать минимум 3 символа")
+    .required("Обязательное поле"),
+  password: yup
+    .string()
+    .min(6, "Пароль должен содержать минимум 6 символов")
+    .required("Обязательное поле"),
+});
+
+type FormType = "registration" | "enter";
+
+interface RegistrationProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+export const Registration: React.FC<RegistrationProps> = ({
+  open,
+  onClose,
+}) => {
+  const [type, setType] = React.useState<FormType>("registration");
+  const router = useRouter();
+
+  const formik = useFormik({
+    initialValues: {
+      login: "",
+      email: "",
+      password: "",
+    },
+    validationSchema:
+      type === "registration" ? registrationSchema : loginSchema,
+    onSubmit: async (values, { setSubmitting, resetForm, setErrors }) => {
+      try {
+        const endpoint = type === "registration" ? "/register_user" : "/login";
+        const payload =
+          type === "registration"
+            ? {
+                login: values.login,
+                password: values.password,
+                email: values.email,
+              }
+            : { login: values.login, password: values.password };
+
+        const response = await axios.post(
+          `${API_BASE_URL}${endpoint}`,
+          payload
+        );
+
+        const { token } = response.data;
+        Cookies.set("auth_token", token, {
+          expires: 7,
+          secure: true,
+          sameSite: "strict",
+        });
+
+        setSubmitting(false);
+        resetForm();
+        onClose();
+      } catch (error: any) {
+        setSubmitting(false);
+        if (error.response) {
+          setErrors({
+            login: error.response.data.message || "Произошла ошибка",
+          });
+        } else {
+          setErrors({ login: "Не удалось подключиться к серверу" });
+        }
+      }
+    },
   });
 
-  const validateRegForm = () => {
-    const newErrors = {
-      login: !login,
-      email: !email,
-      password: !password,
-    };
-    setErrors(newErrors);
-    return !Object.values(newErrors).includes(true);
-  };
-
-  const validateEnterForm = () => {
-    const newErrors = {
-      login: !login,
-      password: !password,
-      email: !email,
-    };
-    
-    setErrors(newErrors);
-    return !Object.values(newErrors).includes(true);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    let isValid =
-      type === "registration" ? validateRegForm() : validateEnterForm();
-
-    if (isValid) {
-      setSub(true);
-
-      console.log("Форма успешно отправлена");
-
-      setLogin("");
-      setEmail("");
-      setPassword("");
-      setSub(false);
-    }
-  };
   const changeType = () => {
     setType(type === "registration" ? "enter" : "registration");
+    formik.resetForm();
   };
+
+  const handleLogout = async () => {
+    try {
+      await axios.post(
+        `${API_BASE_URL}/logout`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("auth_token")}`,
+          },
+        }
+      );
+      Cookies.remove("auth_token");
+      router.push("/");
+    } catch (error) {
+      console.error("Ошибка при выходе:", error);
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit} className={styles.registration}>
-      <h1>{type === "registration" ? "Регистрация" : "Вход"}</h1>
-      <TextField
-        fullWidth
-        margin="normal"
-        error={errors.login}
-        id={
-          errors.login ? "outlined-helper-text" : "outlined-error-helper-text"
-        }
-        label={errors.login ? "Ошибка" : "Логин"}
-        value={login}
-        onChange={(e) => setLogin(e.target.value)}
-        helperText={errors.login ? "Вы не ввели свой логин!" : ""}
-        className={styles.inputField}
-      />
-      {type === "registration" && (
-        <TextField
-          fullWidth
-          margin="normal"
-          error={errors.email}
-          id={
-            errors.email ? "outlined-helper-text" : "outlined-error-helper-text"
-          }
-          label={errors.email ? "Ошибка" : "Электронная почта"}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          helperText={errors.email ? "Вы не ввели свою электронную почту!" : ""}
-          className={styles.inputField}
-        />
-      )}
-      <TextField
-        fullWidth
-        type="password"
-        margin="normal"
-        error={errors.password}
-        id={
-          errors.password
-            ? "outlined-helper-text"
-            : "outlined-error-helper-text"
-        }
-        label={errors.password ? "Ошибка" : "Пароль"}
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        helperText={errors.password ? "Вы не ввели свой пароль!" : ""}
-        className={styles.inputField}
-      />
-      <Button
-        type="submit"
-        size="large"
-        disabled={isSub}
-        className={styles.btn}
-        variant="contained"
-      >
-        {type === "registration" ? "Зарегистрироваться" : "Войти"}
-      </Button>{" "}
-      <Button className={styles.btnText} onClick={changeType} variant="text">
-        {type === "registration"
-          ? "Уже зарегистрированы? Войти"
-          : "Еще нет аккаунта? Регистрация"}
-      </Button>
-    </form>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+      <DialogTitle>
+        {type === "registration" ? "Регистрация" : "Вход"}
+      </DialogTitle>
+      <form onSubmit={formik.handleSubmit}>
+        <DialogContent>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <TextField
+              fullWidth
+              id="login"
+              name="login"
+              label="Логин*"
+              value={formik.values.login}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.login && Boolean(formik.errors.login)}
+              helperText={formik.touched.login && formik.errors.login}
+            />
+            {type === "registration" && (
+              <TextField
+                fullWidth
+                id="email"
+                name="email"
+                label="Электронная почта"
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.email && Boolean(formik.errors.email)}
+                helperText={formik.touched.email && formik.errors.email}
+              />
+            )}
+            <TextField
+              fullWidth
+              id="password"
+              name="password"
+              label="Пароль*"
+              type="password"
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.password && Boolean(formik.errors.password)}
+              helperText={formik.touched.password && formik.errors.password}
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: "space-between", p: 3 }}>
+          <Button
+            type="button"
+            onClick={changeType}
+            color="primary"
+            variant="text"
+          >
+            {type === "registration"
+              ? "Уже зарегистрированы? Войти"
+              : "Еще нет аккаунта? Регистрация"}
+          </Button>
+          <Box>
+            <Button
+              type="submit"
+              color="primary"
+              variant="contained"
+              disabled={formik.isSubmitting}
+              sx={{ mr: 1 }}
+            >
+              {type === "registration" ? "Зарегистрироваться" : "Войти"}
+            </Button>
+            {Cookies.get("auth_token") && (
+              <Button
+                onClick={handleLogout}
+                color="secondary"
+                variant="outlined"
+              >
+                Выйти
+              </Button>
+            )}
+          </Box>
+        </DialogActions>
+      </form>
+    </Dialog>
   );
-}
+};

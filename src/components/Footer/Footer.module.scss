@@ -1,0 +1,144 @@
+.footer {
+    padding-top: 3rem;
+    margin-top: 2rem;
+
+    p {
+        color: #777777;
+    }
+}
+
+.container {
+    max-width: 1320px;
+    width: 100%;
+    margin-right: auto;
+    margin-left: auto;
+    padding-left: 12px;
+    padding-right: 12px;
+    box-sizing: border-box;
+}
+
+.navbarContainer {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.companyDetails {
+    width: 60%;
+    max-width: 100%;
+    flex: 0 0 auto;
+    padding-right: 2rem;
+    line-height: 1.428;
+
+    @media (max-width: 1140px) {
+        padding: 0;
+        width: 100%;
+    }
+}
+
+.logo {
+    svg {
+        filter: none;
+    }
+}
+
+.content {
+    margin-top: 1rem;
+    font-size: 16px;
+    line-height: 1.8;
+    padding-right: 1rem;
+}
+
+.icons {
+    margin-top: 1.5rem;
+}
+
+.iconList {
+    display: flex;
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+}
+
+.iconItem {
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    margin-right: 14px;
+}
+
+.iconLink {
+    width: 30px;
+    padding: 6px;
+}
+
+.navbar {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: flex-start;
+    flex-grow: 1;
+    line-height: 1.428;
+
+    @media (max-width: 1140px) {
+        padding: 0;
+        width: 100%;
+    }
+
+    @media (max-width: 992px) {
+        row-gap: 3rem;
+    }
+}
+
+.navbarCol {
+    width: 33%;
+    flex: 0 0 auto;
+
+    @media (max-width: 992px) {
+        width: 50%;
+    }
+}
+
+.title {
+    margin-bottom: 1.5rem;
+    color: #000;
+    overflow-wrap: break-word;
+    padding: 0 0.5rem 0 0;
+}
+
+.linkList {
+    padding: 0 0.5rem 0 0;
+    margin: 0;
+}
+
+.linkItem {
+    list-style: none;
+
+    &:not(:last-child) {
+        margin-bottom: 1rem;
+    }
+}
+
+.link {
+    font-size: 16px;
+    text-decoration: none;
+    color: #777777;
+    overflow-wrap: break-word;
+
+    &:hover {
+        color: #000;
+    }
+}
+
+.copyright {
+    padding: 2rem 0;
+    border-top: 1px solid rgb(219, 215, 215);
+
+    p {
+        font-size: 14px;
+        margin-bottom: 0;
+    }
+}
