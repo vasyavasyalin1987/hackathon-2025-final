@@ -1,40 +1,48 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./Header.module.scss";
 import bannerImageData from "@/assets/img/banner.jpg";
 import Image from "next/image";
 import { Registration } from "@/components/Auth/Registration";
 import { StolotoIcon } from "@/assets/icons/StolotoIcon/StolotoIcon";
-import { API_BASE_URL } from "@/api";
-import axios from "axios";
 import Cookies from "js-cookie";
-import { useRouter } from "next/router";
+import axios from "axios";
+import { API_BASE_URL } from "@/api";
+import { useRouter } from "next/router"; // Импортируем useRouter
 
 export const Header = () => {
-  const router = useRouter();
+  const router = useRouter(); // Инициализируем router
   const [isAuthOpen, setAuthOpen] = useState(false);
   const [showDrop, setShowDrop] = useState(false);
+  const [showDrop1, setShowDrop1] = useState(false);
   const [showMega, setShowMega] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [log, setLog] = useState<"logIn" | "logOut">("logIn");
+  const [user, setUser] = useState(null); // Состояние для хранения информации о пользователе
 
-  const toggleMenu = () => setMenuOpen(!menuOpen);
-  const closeMenu = () => setMenuOpen(false);
+  useEffect(() => {
+    const checkAuth = () => {
+      if (Cookies.get("auth_token")) {
+        setLog("logOut");
+        // Здесь можно добавить логику для получения данных о пользователе
+      } else {
+        setLog("logIn");
+      }
+    };
+
+    checkAuth();
+  }, []);
+
   const handleLogout = async () => {
     try {
-      await axios.post(
-        `${API_BASE_URL}/logout`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${Cookies.get("auth_token")}`,
-          },
-        }
-      );
       Cookies.remove("auth_token");
       router.push("/");
     } catch (error) {
       console.error("Ошибка при выходе:", error);
     }
   };
+
+  const toggleMenu = () => setMenuOpen(!menuOpen);
+  const closeMenu = () => setMenuOpen(false);
 
   return (
     <>
@@ -141,14 +149,39 @@ export const Header = () => {
                 </div>
               </li>
               <li>
-                <a
-                  href="#"
-                  onClick={() => {
-                    setAuthOpen(true);
-                  }}
-                >
-                  Выйти
-                </a>
+                <div className={styles.row}>
+                  <div className={styles.dropdown}>
+                    <a
+                      href="#"
+                      onClick={() =>
+                        log === "logIn" ? setAuthOpen(true) : handleLogout()
+                      }
+                    >
+                      {log === "logIn" ? "Регистрация | Вход" : "Выйти"}
+                    </a>
+                    <span
+                      className={styles.mobileItem}
+                      onClick={() => setShowDrop1(!showDrop1)}
+                    >
+                      Мой аккаунт
+                    </span>
+                    <ul
+                      className={`${styles.dropMenu} ${
+                        showDrop1 ? styles.show : ""
+                      }`}
+                    >
+                      <li>
+                        <a href="#">Мои билеты</a>
+                      </li>
+                      <li>
+                        <a href="#">Мои достижения</a>
+                      </li>
+                      <li>
+                        <a href="#">История бонусов</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
               </li>
             </ul>
           </div>
@@ -161,12 +194,7 @@ export const Header = () => {
         </div>
       </nav>
       <div className={styles.spacer}></div>
-      <Registration
-        open={isAuthOpen}
-        onClose={() => {
-          setAuthOpen(false);
-        }}
-      />
+      <Registration open={isAuthOpen} onClose={() => setAuthOpen(false)} />
     </>
   );
 };
