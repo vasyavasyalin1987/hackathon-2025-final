@@ -23,7 +23,7 @@ const registrationSchema = yup.object({
   email: yup.string().email("Некорректный email"),
   password: yup
     .string()
-    .min(4, "Пароль должен содержать минимум 6 символов")
+    .min(6, "Пароль должен содержать минимум 6 символов")
     .required("Обязательное поле"),
 });
 
@@ -34,7 +34,7 @@ const loginSchema = yup.object({
     .required("Обязательное поле"),
   password: yup
     .string()
-    .min(4, "Пароль должен содержать минимум 6 символов")
+    .min(6, "Пароль должен содержать минимум 6 символов")
     .required("Обязательное поле"),
 });
 
@@ -70,16 +70,16 @@ export const Registration: React.FC<RegistrationProps> = ({
                 password: values.password,
                 email: values.email,
               }
-            : { identifier: values.login, password: values.password };
+            : { login: values.login, password: values.password };
 
         const response = await axios.post(
-          `${API_BASE_URL}/api${endpoint}`,
+          `${API_BASE_URL}${endpoint}`,
           payload
         );
 
         const { token } = response.data;
         Cookies.set("auth_token", token, {
-          expires: 356,
+          expires: 7,
           secure: true,
           sameSite: "strict",
         });
@@ -103,6 +103,24 @@ export const Registration: React.FC<RegistrationProps> = ({
   const changeType = () => {
     setType(type === "registration" ? "enter" : "registration");
     formik.resetForm();
+  };
+
+  const handleLogout = async () => {
+    try {
+      await axios.post(
+        `${API_BASE_URL}/logout`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("auth_token")}`,
+          },
+        }
+      );
+      Cookies.remove("auth_token");
+      router.push("/");
+    } catch (error) {
+      console.error("Ошибка при выходе:", error);
+    }
   };
 
   return (
@@ -172,6 +190,15 @@ export const Registration: React.FC<RegistrationProps> = ({
             >
               {type === "registration" ? "Зарегистрироваться" : "Войти"}
             </Button>
+            {Cookies.get("auth_token") && (
+              <Button
+                onClick={handleLogout}
+                color="secondary"
+                variant="outlined"
+              >
+                Выйти
+              </Button>
+            )}
           </Box>
         </DialogActions>
       </form>
