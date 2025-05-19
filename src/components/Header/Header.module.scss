@@ -1,10 +1,5 @@
 .logo {
     display: flex;
-
-    &_image {
-        filter: invert(1);
-        width: 160px;
-    }
 }
 
 .nav {
@@ -274,4 +269,9 @@
             background: #3a3b3c;
         }
     }
+}
+
+.spacer {
+    height: 70px;
+    margin-bottom: 16px;
 }
