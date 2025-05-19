@@ -1,0 +1,44 @@
+.contacts {
+  display: grid;
+  grid-template-columns: 50% 50%;
+}
+
+.con {
+  text-align: center;
+  font-size: 10vh;
+  margin: 3%;
+}
+
+.container {
+  font-size: 3vh;
+
+  a {
+    text-decoration: none;
+    margin: 2%;
+  }
+
+  h3, h2 {
+    margin: 2%;
+  }
+}
+
+.address{
+  padding: 5%;
+  margin: 3%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media screen and (max-width: 520px) {
+  .contacts {
+    display: flex;
+    flex-direction: column;
+  }
+  .con {
+    font-size: 7vh;
+  }
+  .container {
+    font-size: 2.4vh;
+  }
+}

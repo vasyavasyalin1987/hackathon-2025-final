@@ -1,0 +1,65 @@
+export const PrizesData = [
+  {
+    id: 0,
+    name: 'Приз ценностью 0/4',
+    imgSrc: '/money.png',
+    imgAlt: '',
+    value: 0,
+  },
+  {
+    id: 1,
+    name: 'Приз ценностью 1/4',
+    imgSrc: '/money.png',
+    imgAlt: '/',
+    value: 1,
+  },
+  {
+    id: 2,
+    name: 'Приз ценностью 0/4',
+    imgSrc: '/money.png',
+    imgAlt: '/',
+    value: 0,
+  },
+  {
+    id: 3,
+    name: 'Приз ценностью 2/4',
+    imgSrc: '/money.png',
+    imgAlt: '/',
+    value: 2,
+  },
+  {
+    id: 4,
+    name: 'Приз ценностью 3/4',
+    imgSrc: '/money.png',
+    imgAlt: '/',
+    value: 3,
+  },
+  {
+    id: 5,
+    name: 'Приз ценностью 4/4',
+    imgSrc: '/money.png',
+    imgAlt: '/',
+    value: 4,
+  },
+  {
+    id: 6,
+    name: 'Приз ценностью 4/4',
+    imgSrc: '/money.png',
+    imgAlt: '/',
+    value: 4,
+  },
+  {
+    id: 7,
+    name: 'Приз ценностью 3/4',
+    imgSrc: '/money.png',
+    imgAlt: '/',
+    value: 3,
+  },
+  {
+    id: 8,
+    name: 'Приз ценностью 3/4',
+    imgSrc: '/money.png',
+    imgAlt: '/',
+    value: 3,
+  }
+]
