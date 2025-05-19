@@ -66,7 +66,7 @@ export const Registration: React.FC<RegistrationProps> = ({
         const payload =
           type === "registration"
             ? {
-                identifier: values.login,
+                login: values.login,
                 password: values.password,
                 email: values.email,
               }
@@ -103,24 +103,6 @@ export const Registration: React.FC<RegistrationProps> = ({
   const changeType = () => {
     setType(type === "registration" ? "enter" : "registration");
     formik.resetForm();
-  };
-
-  const handleLogout = async () => {
-    try {
-      await axios.post(
-        `${API_BASE_URL}/logout`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${Cookies.get("auth_token")}`,
-          },
-        }
-      );
-      Cookies.remove("auth_token");
-      router.push("/");
-    } catch (error) {
-      console.error("Ошибка при выходе:", error);
-    }
   };
 
   return (
@@ -190,15 +172,6 @@ export const Registration: React.FC<RegistrationProps> = ({
             >
               {type === "registration" ? "Зарегистрироваться" : "Войти"}
             </Button>
-            {Cookies.get("auth_token") && (
-              <Button
-                onClick={handleLogout}
-                color="secondary"
-                variant="outlined"
-              >
-                Выйти
-              </Button>
-            )}
           </Box>
         </DialogActions>
       </form>
