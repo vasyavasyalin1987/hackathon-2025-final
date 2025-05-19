@@ -82,7 +82,7 @@ const Footer = () => {
               </ul>
             </div>
             <div className={styles.navbarCol}>
-              <h5 className={styles.title}>Company</h5>
+              <h5 className={styles.title}>Лотереи</h5>
               <ul className={styles.linkList}>
                 <li className={styles.linkItem}>
                   <a href="#" className={styles.link}>
