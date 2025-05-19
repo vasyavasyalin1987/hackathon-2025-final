@@ -23,7 +23,7 @@ const registrationSchema = yup.object({
   email: yup.string().email("Некорректный email"),
   password: yup
     .string()
-    .min(6, "Пароль должен содержать минимум 6 символов")
+    .min(4, "Пароль должен содержать минимум 6 символов")
     .required("Обязательное поле"),
 });
 
@@ -34,7 +34,7 @@ const loginSchema = yup.object({
     .required("Обязательное поле"),
   password: yup
     .string()
-    .min(6, "Пароль должен содержать минимум 6 символов")
+    .min(4, "Пароль должен содержать минимум 6 символов")
     .required("Обязательное поле"),
 });
 
@@ -66,11 +66,11 @@ export const Registration: React.FC<RegistrationProps> = ({
         const payload =
           type === "registration"
             ? {
-                login: values.login,
+                identifier: values.login,
                 password: values.password,
                 email: values.email,
               }
-            : { login: values.login, password: values.password };
+            : { identifier: values.login, password: values.password };
 
         const response = await axios.post(
           `${API_BASE_URL}${endpoint}`,
@@ -79,7 +79,7 @@ export const Registration: React.FC<RegistrationProps> = ({
 
         const { token } = response.data;
         Cookies.set("auth_token", token, {
-          expires: 7,
+          expires: 356,
           secure: true,
           sameSite: "strict",
         });
