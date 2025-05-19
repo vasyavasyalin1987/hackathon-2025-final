@@ -4,8 +4,13 @@ import bannerImageData from "@/assets/img/banner.jpg";
 import Image from "next/image";
 import { Registration } from "@/components/Auth/Registration";
 import { StolotoIcon } from "@/assets/icons/StolotoIcon/StolotoIcon";
+import { API_BASE_URL } from "@/api";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { useRouter } from "next/router";
 
 export const Header = () => {
+  const router = useRouter();
   const [isAuthOpen, setAuthOpen] = useState(false);
   const [showDrop, setShowDrop] = useState(false);
   const [showMega, setShowMega] = useState(false);
@@ -13,6 +18,23 @@ export const Header = () => {
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
   const closeMenu = () => setMenuOpen(false);
+  const handleLogout = async () => {
+    try {
+      await axios.post(
+        `${API_BASE_URL}/logout`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("auth_token")}`,
+          },
+        }
+      );
+      Cookies.remove("auth_token");
+      router.push("/");
+    } catch (error) {
+      console.error("Ошибка при выходе:", error);
+    }
+  };
 
   return (
     <>
