@@ -120,7 +120,7 @@ export function CreateLotteryModal({
       let response;
       if (settingTicketId) {
         response = await axios.put(
-          `${API_BASE_URL}/main/update-setting_ticket/${settingTicketId}`,
+          `${API_BASE_URL}/api/update-setting_ticket/${settingTicketId}`,
           {
             time: values.time || null,
             price_ticket: values.price_ticket || null,
@@ -133,7 +133,7 @@ export function CreateLotteryModal({
           }
         );
       } else {
-        response = await axios.post(`${API_BASE_URL}/main/setting_ticket`, {
+        response = await axios.post(`${API_BASE_URL}/api/setting_ticket`, {
           time: values.time || null,
           price_ticket: values.price_ticket || null,
           percent_fond: values.percent_fond || null,
