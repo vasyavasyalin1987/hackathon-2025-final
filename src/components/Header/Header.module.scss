@@ -1,0 +1,277 @@
+.logo {
+    display: flex;
+
+    &_image {
+        filter: invert(1);
+        width: 160px;
+    }
+}
+
+.nav {
+    position: fixed;
+    z-index: 99;
+    width: 100%;
+    background: #242526;
+
+    .wrapper {
+        position: relative;
+        max-width: 1300px;
+        padding: 0 30px;
+        height: 70px;
+        line-height: 70px;
+        margin: auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .logo a {
+            color: #f2f2f2;
+            font-size: 30px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .navLinks {
+            display: inline-flex;
+
+            &.active {
+                left: 0;
+            }
+
+            ul {
+                display: flex;
+                list-style: none;
+                width: max-content;
+                box-sizing: content-box;
+                padding: 0 8px;
+
+                li {
+                    position: relative;
+
+                    a {
+                        color: #f2f2f2;
+                        text-decoration: none;
+                        font-size: 18px;
+                        font-weight: 500;
+                        padding: 9px 15px;
+                        border-radius: 5px;
+                        transition: all 0.3s ease;
+
+                        &:hover {
+                            background: #3a3b3c;
+                        }
+                    }
+                }
+            }
+        }
+
+        .btn {
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            display: none;
+        }
+
+        .closeBtn {
+            position: absolute;
+            right: 30px;
+            top: 10px;
+        }
+    }
+}
+
+.megaMenu:not(#\#) {
+    position: static;
+}
+
+.dropdown,
+.megaMenu {
+    .dropMenu,
+    .megaBox {
+        position: absolute;
+        background: #242526;
+        right: 0;
+        width: auto;
+        top: 85px;
+        opacity: 0;
+        visibility: hidden;
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+        z-index: 100;
+    }
+
+    .megaBox {
+        right: 0;
+        width: calc(100% - 40px);
+        padding: 0 30px;
+        margin: 0 20px;
+
+        .content {
+            background: #242526;
+            padding: 25px 20px;
+            display: flex;
+            justify-content: space-between;
+
+            .row {
+                width: calc(25% - 30px);
+                margin-left: -40px;
+                border-left: 1px solid rgba(255, 255, 255, 0.09);
+                padding-left: 20px;
+
+                &:first-child {
+                    width: 300px;
+                }
+
+                img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+
+                header {
+                    color: #f2f2f2;
+                    font-size: 20px;
+                    font-weight: 500;
+                    margin-bottom: 10px;
+                    padding-left: 12px;
+                }
+
+                .megaLinks {
+                    flex-direction: column;
+
+                    li {
+                        a {
+                            color: #d9d9d9;
+                            font-size: 17px;
+                            display: block;
+                            padding: 5px 8px;
+                            line-height: 1.5;
+
+                            &:hover {
+                                color: #f2f2f2;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    &:hover {
+        .dropMenu,
+        .megaBox {
+            top: 70px;
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+}
+
+.mobileItem {
+    display: none;
+}
+
+@media screen and (max-width: 970px) {
+    .nav {
+        .wrapper {
+            .btn {
+                display: block;
+            }
+
+            .navLinks {
+                position: fixed;
+                height: 100vh;
+                width: 100%;
+                max-width: 350px;
+                top: 0;
+                left: -100%;
+                background: #242526;
+                display: block;
+                padding: 50px 10px;
+                line-height: 50px;
+                overflow-y: auto;
+                box-shadow: 0px 15px 15px rgba(0, 0, 0, 0.18);
+                transition: all 0.3s ease;
+
+                &.active {
+                    left: 0;
+                }
+
+                ul {
+                    flex-direction: column;
+
+                    li {
+                        margin: 15px 0;
+
+                        a {
+                            font-size: 20px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .dropdown,
+    .megaMenu {
+        .dropMenu,
+        .megaBox {
+            position: static;
+            opacity: 1;
+            visibility: visible;
+            width: 100%;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: none;
+            padding-left: 20px;
+        }
+
+        .show {
+            max-height: 1000px;
+        }
+
+        .megaBox {
+            padding: 0 20px;
+
+            .content {
+                flex-direction: column;
+                padding: 20px 20px 0 20px;
+
+                .row {
+                    width: 100%;
+                    margin-bottom: 15px;
+                    border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+                    &:first-child {
+                        border-top: 0;
+                    }
+
+                    .megaLinks {
+                        border-left: 0;
+                        padding-left: 15px;
+                    }
+                }
+            }
+        }
+    }
+
+    .desktopItem {
+        display: none;
+    }
+
+    .mobileItem {
+        display: block;
+        color: #f2f2f2;
+        font-size: 20px;
+        font-weight: 500;
+        padding-left: 20px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+
+        &:hover {
+            background: #3a3b3c;
+        }
+    }
+}
