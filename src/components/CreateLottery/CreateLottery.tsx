@@ -71,7 +71,7 @@ export function CreateGame() {
     }
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/setting_ticket`, {
+      const response = await axios.post(`${API_BASE_URL}/main/setting_ticket`, {
         time: values.time,
         price_ticket: values.price_ticket,
         percent_fond: values.percent_fond,

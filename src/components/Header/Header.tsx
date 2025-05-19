@@ -5,8 +5,6 @@ import Image from "next/image";
 import { Registration } from "@/components/Auth/Registration";
 import { StolotoIcon } from "@/assets/icons/StolotoIcon/StolotoIcon";
 import Cookies from "js-cookie";
-import axios from "axios";
-import { API_BASE_URL } from "@/api";
 import { useRouter } from "next/router"; // Импортируем useRouter
 
 export const Header = () => {

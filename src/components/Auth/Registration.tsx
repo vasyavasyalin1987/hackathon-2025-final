@@ -73,7 +73,7 @@ export const Registration: React.FC<RegistrationProps> = ({
             : { identifier: values.login, password: values.password };
 
         const response = await axios.post(
-          `${API_BASE_URL}${endpoint}`,
+          `${API_BASE_URL}/main${endpoint}`,
           payload
         );
 
