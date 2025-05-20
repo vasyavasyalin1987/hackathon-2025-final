@@ -1,45 +1,53 @@
 import { Layout } from "@/components/Layout/Layout";
+import { StolotoIconWOLetters } from
+    "@/assets/icons/StolotoIconWOLetters/StolotoIconWOLetters";
+import Value from "@/components/Value/Value";
+import { Values } from "@/constants/Values.constants"
+import styles from "@/styles/mainContainer.module.scss"
 
 export default function Home() {
   return (
     <Layout>
-      <h1>Здесь будет главная</h1>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem
-        doloribus non, iusto maiores voluptas consequuntur cupiditate molestiae,
-        expedita, in vel sequi nisi et quisquam molestias consectetur porro.
-        Reprehenderit, beatae quo!
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem
-        doloribus non, iusto maiores voluptas consequuntur cupiditate molestiae,
-        expedita, in vel sequi nisi et quisquam molestias consectetur porro.
-        Reprehenderit, beatae quo!
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem
-        doloribus non, iusto maiores voluptas consequuntur cupiditate molestiae,
-        expedita, in vel sequi nisi et quisquam molestias consectetur porro.
-        Reprehenderit, beatae quo!
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem
-        doloribus non, iusto maiores voluptas consequuntur cupiditate molestiae,
-        expedita, in vel sequi nisi et quisquam molestias consectetur porro.
-        Reprehenderit, beatae quo!
-      </p>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem
-        doloribus non, iusto maiores voluptas consequuntur cupiditate molestiae,
-        expedita, in vel sequi nisi et quisquam molestias consectetur porro.
-        Reprehenderit, beatae quo!
-      </p>{" "}
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem
-        doloribus non, iusto maiores voluptas consequuntur cupiditate molestiae,
-        expedita, in vel sequi nisi et quisquam molestias consectetur porro.
-        Reprehenderit, beatae quo!
-      </p>
+      <div className={styles.mainContainer}>
+        <div className={styles.description}>
+          <div className={styles.text}>
+            <h1>
+              «Столото» — бренд крупнейшего распространителя государственных
+              лотерей в России
+            </h1>
+            <p>
+              Государственные лотереи, распространяемые под брендом «Столото»,
+              продаются в каждом регионе РФ и в единственном в России лотерейном
+              интернет-супермаркете www.stoloto.ru. Компания применяет
+              современные технологии, благодаря которым каждый может выбрать
+              подходящий ему способ участия в лотереях, а каждый желающий —
+              смотреть розыгрыши лотерей в прямом эфире или лично приехать в
+              единственный в мире лотерейный центр и своими глазами увидеть,
+              как формируется выигрышная комбинация.
+            </p>
+          </div>
+          <div className={styles.logo}>
+            <StolotoIconWOLetters />
+          </div>
+        </div>
+
+        <div className={styles.values}>
+          <Value {...Values[0]} />
+          <Value {...Values[1]} />
+          <Value {...Values[2]} />
+        </div>
+
+        <div className={styles.mission}>
+          <h3>Наша миссия</h3>
+          <p>
+            Миссия «Столото» — возрождение лотерейной культуры в стране.
+            Формирование отношения россиян к лотереям как к приятной форме
+            досуга, дающей участникам шанс реализовать потребность в ярких
+            эмоциях, улучшить материальное благосостояние и внести вклад в
+            поддержку российского спорта.
+          </p>
+        </div>
+      </div>
     </Layout>
   );
 }
