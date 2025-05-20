@@ -86,7 +86,7 @@ export const Header = () => {
                   }`}
                 >
                   <li>
-                    <Link href="/lotteries">Гибкое Бинго</Link>
+                    <Link href="/lotteries">Гибкий Ряд</Link>
                   </li>
                   <li>
                     <a href="#">Лотерея-судоку</a>
@@ -137,10 +137,10 @@ export const Header = () => {
                           <Link href="/account/my-tickets">Мои билеты</Link>
                         </li>
                         <li>
-                          <a href="#">Мои достижения</a>
+                          <Link href="/account/profile">Мой профиль</Link>
                         </li>
                         <li>
-                          <a href="#">История бонусов</a>
+                          <Link href="/account/history">История бонусов</Link>
                         </li>
                       </ul>
                     </div>
@@ -156,7 +156,9 @@ export const Header = () => {
                         log === "logIn" ? setAuthOpen(true) : handleLogout()
                       }
                     >
-                      {log === "logIn" ? "Регистрация | Вход" : "Мой аккаунт | Выйти"}
+                      {log === "logIn"
+                        ? "Регистрация | Вход"
+                        : "Мой аккаунт | Выйти"}
                     </a>
                     <span
                       className={styles.mobileItem}
@@ -174,10 +176,10 @@ export const Header = () => {
                           <Link href="/account/my-tickets">Мои билеты</Link>
                         </li>
                         <li>
-                          <a href="#">Мои достижения</a>
+                          <Link href="/account/profile">Мой профиль</Link>
                         </li>
                         <li>
-                          <a href="#">История бонусов</a>
+                          <Link href="/account/history">История бонусов</Link>
                         </li>
                       </ul>
                     )}
