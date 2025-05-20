@@ -1,15 +1,47 @@
-import React, { useState } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import styles from "./Header.module.scss";
 import bannerImageData from "@/assets/img/banner.jpg";
 import Image from "next/image";
 import { Registration } from "@/components/Auth/Registration";
 import { StolotoIcon } from "@/assets/icons/StolotoIcon/StolotoIcon";
+import Cookies from "js-cookie";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
 export const Header = () => {
+  const router = useRouter();
   const [isAuthOpen, setAuthOpen] = useState(false);
   const [showDrop, setShowDrop] = useState(false);
+  const [showDrop1, setShowDrop1] = useState(false);
   const [showMega, setShowMega] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [role, setRole] = useState("");
+  const [log, setLog] = useState<"logIn" | "logOut">("logIn");
+
+  useLayoutEffect(() => {
+    const checkAuth = () => {
+      if (Cookies.get("auth_token")) {
+        setLog("logOut");
+      } else {
+        setLog("logIn");
+      }
+
+      setRole(Cookies.get("auth_role") ?? "");
+    };
+
+    checkAuth();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      Cookies.remove("auth_token");
+      Cookies.remove("auth_role");
+      await router.push("/");
+      window.location.reload();
+    } catch (error) {
+      console.error("Ошибка при выходе:", error);
+    }
+  };
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
   const closeMenu = () => setMenuOpen(false);
@@ -32,9 +64,9 @@ export const Header = () => {
             </button>
             <ul>
               <li>
-                <a href="#" onClick={closeMenu}>
+                <Link href="/" onClick={closeMenu}>
                   Главная
-                </a>
+                </Link>
               </li>
               <li>
                 <a href="#" onClick={closeMenu}>
@@ -42,9 +74,9 @@ export const Header = () => {
                 </a>
               </li>
               <li className={styles.dropdown}>
-                <a href="#" className={styles.desktopItem}>
+                <Link href="/lotteries" className={styles.desktopItem}>
                   Лотереи
-                </a>
+                </Link>
                 <span
                   className={styles.mobileItem}
                   onClick={() => setShowDrop(!showDrop)}
@@ -57,10 +89,10 @@ export const Header = () => {
                   }`}
                 >
                   <li>
-                    <a href="#">Гибкое Бинго</a>
+                    <Link href="/lotteries">Гибкий Ряд</Link>
                   </li>
                   <li>
-                    <a href="#">Лотерея-судоку</a>
+                    <Link href="/sudoku-lottery">Лотерея-судоку</Link>
                   </li>
                   <li>
                     <a href="#">Лотерея-сапер</a>
@@ -71,9 +103,9 @@ export const Header = () => {
                 </ul>
               </li>
               <li className={styles.megaMenu}>
-                <a href="#" className={styles.desktopItem}>
+                <Link href="/" className={styles.desktopItem}>
                   Информация
-                </a>
+                </Link>
                 <span
                   className={styles.mobileItem}
                   onClick={() => setShowMega(!showMega)}
@@ -91,42 +123,95 @@ export const Header = () => {
                       <header>Как играть</header>
                       <ul className={styles.megaLinks}>
                         <li>
-                          <a href="#">Правила игры</a>
+                          <Link href="/rules">Правила игры</Link>
                         </li>
                         <li>
-                          <a href="#">Призовая структура</a>
+                          <Link href="/prizes">Призовая структура</Link>
                         </li>
                         <li>
-                          <a href="#">Выигрышные номера</a>
+                          <Link href="/win-nums">Выигрышные номера</Link>
                         </li>
                       </ul>
                     </div>
                     <div className={styles.row}>
                       <header>Мой аккаунт</header>
                       <ul className={styles.megaLinks}>
-                        <li>
-                          <a href="#">Мои билеты</a>
-                        </li>
-                        <li>
-                          <a href="#">Мои достижения</a>
-                        </li>
-                        <li>
-                          <a href="#">История бонусов</a>
-                        </li>
+                        {role === "Администратор" ? (
+                          <li>
+                            <Link href="/admin/lotteries">
+                              Управление лотереями
+                            </Link>
+                          </li>
+                        ) : (
+                          <>
+                            <li>
+                              <Link href="/account/my-tickets">Мои билеты</Link>
+                            </li>
+                            <li>
+                              <Link href="/account/profile">Мой профиль</Link>
+                            </li>
+                            <li>
+                              <Link href="/account/history">
+                                История бонусов
+                              </Link>
+                            </li>
+                          </>
+                        )}
                       </ul>
                     </div>
                   </div>
                 </div>
               </li>
               <li>
-                <a
-                  href="#"
-                  onClick={() => {
-                    setAuthOpen(true);
-                  }}
-                >
-                  Выйти
-                </a>
+                <div className={styles.row}>
+                  <div className={styles.dropdown}>
+                    <a
+                      href="#"
+                      onClick={() =>
+                        log === "logIn" ? setAuthOpen(true) : handleLogout()
+                      }
+                    >
+                      {log === "logIn"
+                        ? "Регистрация | Вход"
+                        : "Мой аккаунт | Выйти"}
+                    </a>
+                    <span
+                      className={styles.mobileItem}
+                      onClick={() => setShowDrop1(!showDrop1)}
+                    >
+                      Мой аккаунт
+                    </span>
+                    {log !== "logIn" && (
+                      <ul
+                        className={`${styles.dropMenu} ${
+                          showDrop1 ? styles.show : ""
+                        }`}
+                      >
+                        {role === "Администратор" ? (
+                          <li>
+                            <Link href="/admin/lotteries">
+                              Управление лотереями
+                            </Link>
+                          </li>
+                        ) : (
+                          <>
+                            <li>
+                              <Link href="/account/my-tickets">Мои билеты</Link>
+                            </li>
+                            <li>
+                              <Link href="/account/profile">Мой профиль</Link>
+                            </li>
+                            <li>
+                              <Link href="/account/history">
+                                История бонусов
+                              </Link>
+                            </li>
+                          </>
+                        )}
+                      </ul>
+                    )}
+                  </div>
+                </div>
               </li>
             </ul>
           </div>
@@ -139,12 +224,7 @@ export const Header = () => {
         </div>
       </nav>
       <div className={styles.spacer}></div>
-      <Registration
-        open={isAuthOpen}
-        onClose={() => {
-          setAuthOpen(false);
-        }}
-      />
+      <Registration open={isAuthOpen} onClose={() => setAuthOpen(false)} />
     </>
   );
 };

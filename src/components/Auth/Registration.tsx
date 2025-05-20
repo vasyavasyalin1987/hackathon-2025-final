@@ -70,10 +70,10 @@ export const Registration: React.FC<RegistrationProps> = ({
                 password: values.password,
                 email: values.email,
               }
-            : { login: values.login, password: values.password };
+            : { identifier: values.login, password: values.password };
 
         const response = await axios.post(
-          `${API_BASE_URL}${endpoint}`,
+          `${API_BASE_URL}/api${endpoint}`,
           payload
         );
 
@@ -84,9 +84,16 @@ export const Registration: React.FC<RegistrationProps> = ({
           sameSite: "strict",
         });
 
+        Cookies.set("auth_role", response.data.role, {
+          expires: 7,
+          secure: true,
+          sameSite: "strict",
+        });
+        
         setSubmitting(false);
         resetForm();
         onClose();
+        window.location.reload();
       } catch (error: any) {
         setSubmitting(false);
         if (error.response) {
@@ -103,24 +110,6 @@ export const Registration: React.FC<RegistrationProps> = ({
   const changeType = () => {
     setType(type === "registration" ? "enter" : "registration");
     formik.resetForm();
-  };
-
-  const handleLogout = async () => {
-    try {
-      await axios.post(
-        `${API_BASE_URL}/logout`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${Cookies.get("auth_token")}`,
-          },
-        }
-      );
-      Cookies.remove("auth_token");
-      router.push("/");
-    } catch (error) {
-      console.error("Ошибка при выходе:", error);
-    }
   };
 
   return (
@@ -190,15 +179,6 @@ export const Registration: React.FC<RegistrationProps> = ({
             >
               {type === "registration" ? "Зарегистрироваться" : "Войти"}
             </Button>
-            {Cookies.get("auth_token") && (
-              <Button
-                onClick={handleLogout}
-                color="secondary"
-                variant="outlined"
-              >
-                Выйти
-              </Button>
-            )}
           </Box>
         </DialogActions>
       </form>
