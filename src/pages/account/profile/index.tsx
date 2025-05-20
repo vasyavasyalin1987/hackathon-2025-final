@@ -94,7 +94,6 @@ const UserProfile = ({ userData, error }: UserProfileProps) => {
   const [vipModalOpen, setVipModalOpen] = useState(false);
   const [selectedVipCategory, setSelectedVipCategory] = useState("");
   const [purchaseLoading, setPurchaseLoading] = useState(false);
-
   const handleOpenVipModal = () => setVipModalOpen(true);
   const handleCloseVipModal = () => {
     setVipModalOpen(false);
@@ -104,7 +103,6 @@ const UserProfile = ({ userData, error }: UserProfileProps) => {
   const handlePurchaseVip = async () => {
     setPurchaseLoading(true);
     try {
-      // Placeholder API call (replace with actual endpoint)
       const response = await axios.post(
         `${API_BASE_URL}/api/purchase_vip`,
         { category: selectedVipCategory },
