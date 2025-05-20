@@ -1,5 +1,4 @@
 import { useState } from "react";
-import axios from "axios";
 import {
   Container,
   Grid,
@@ -11,10 +10,18 @@ import {
   Box,
   Button,
 } from "@mui/material";
+import Link from "next/link";
 import styles from "./LotteryList.module.scss";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import { API_BASE_URL } from "@/api";
 import { FillTicketModal } from "../FillTicketModal/FillTicketModal";
+import axios from "axios";
+
+type LotteryListProps = InferGetServerSidePropsType<
+  typeof getServerSideProps
+> & {
+  maxItems?: number;
+};
 
 const formatTime = (timeString: string) => {
   try {
@@ -88,10 +95,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 }
 
-const LotteryList = ({
-  initialTickets,
-  error,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const LotteryList = ({ initialTickets, error, maxItems }: LotteryListProps) => {
   const [selectedTicket, setSelectedTicket] = useState<any>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [tickets] = useState(initialTickets || []);
@@ -107,6 +111,8 @@ const LotteryList = ({
     setSelectedTicket(null);
     setModalOpen(false);
   };
+
+  const displayedTickets = maxItems ? tickets.slice(0, maxItems) : tickets;
 
   if (loading) {
     return (
@@ -137,12 +143,21 @@ const LotteryList = ({
 
   return (
     <Container className={styles.container}>
-      <Typography variant="h4" className={styles.title}>
-        Доступные лотереи
-      </Typography>
-      <Grid container spacing={3}>
-        {tickets.map((ticket: any) => (
-          <Grid key={ticket.id}>
+      <Box className={styles.header}>
+        <Typography variant="h4" className={styles.title}>
+          Доступные лотереи
+        </Typography>
+        {maxItems && tickets.length > maxItems && (
+          <Link href="/lotteries" passHref>
+            <Button variant="outlined" className={styles.viewAllButton}>
+              Посмотреть все лотереи
+            </Button>
+          </Link>
+        )}
+      </Box>
+      <Grid container justifyContent="space-between" spacing={3}>
+        {displayedTickets.map((ticket: any) => (
+          <Grid key={ticket.id} sx={{ maxWidth: 350 }}>
             <Card className={styles.card}>
               <CardContent>
                 <Typography variant="h6" className={styles.cardTitle}>

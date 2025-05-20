@@ -49,7 +49,7 @@ export default function Home({
           </p>
         </div>
       </div>
-      <LotteryList.default {...props} />
+      <LotteryList.default {...props} maxItems={2} />
     </Layout>
   );
 }
