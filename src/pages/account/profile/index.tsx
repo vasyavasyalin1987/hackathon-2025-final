@@ -88,35 +88,65 @@ const formatDate = (date: string) => {
   }
 };
 
+const vipOffers = [
+  { id: 1, name: "Мещанин", price: 500, days: 30 },
+  { id: 2, name: "Буржуй", price: 1000, days: 30 },
+  { id: 3, name: "Олигарх", price: 2000, days: 30 },
+];
+
 const UserProfile = ({ userData, error }: UserProfileProps) => {
   const [loading] = useState(false);
   const [errorMessage] = useState(error);
   const [vipModalOpen, setVipModalOpen] = useState(false);
-  const [selectedVipCategory, setSelectedVipCategory] = useState("");
+  const [selectedVipOffer, setSelectedVipOffer] = useState("");
   const [purchaseLoading, setPurchaseLoading] = useState(false);
+  const [downgradeConfirmation, setDowngradeConfirmation] = useState(false);
+  const [downgradeDetails, setDowngradeDetails] = useState<{
+    currentCategory: number;
+    newCategory: number;
+  } | null>(null);
+
   const handleOpenVipModal = () => setVipModalOpen(true);
+
   const handleCloseVipModal = () => {
     setVipModalOpen(false);
-    setSelectedVipCategory("");
+    setSelectedVipOffer("");
+    setDowngradeConfirmation(false);
+    setDowngradeDetails(null);
   };
 
   const handlePurchaseVip = async () => {
     setPurchaseLoading(true);
     try {
       const response = await axios.post(
-        `${API_BASE_URL}/api/purchase_vip`,
-        { category: selectedVipCategory },
+        `${API_BASE_URL}/api/buy_vip`,
+        {
+          vip_offer_id: selectedVipOffer,
+          confirm_downgrade: downgradeConfirmation,
+        },
         { headers: { Authorization: userData.account.token } }
       );
 
       if (response.data.success) {
         alert("VIP-статус успешно приобретен!");
         handleCloseVipModal();
+        window.location.reload();
       } else {
-        alert(response.data.message || "Ошибка при покупке VIP-статуса");
+        if (response.data.requires_confirmation) {
+          setDowngradeDetails({
+            currentCategory: response.data.current_category,
+            newCategory: response.data.new_category,
+          });
+          setDowngradeConfirmation(true);
+        } else {
+          alert(response.data.message || "Ошибка при покупке VIP-статуса");
+        }
       }
-    } catch (err) {
-      alert("Ошибка сервера при покупке VIP-статуса");
+    } catch (err: any) {
+      alert(
+        err.response?.data?.message ||
+          "Вам отказано в доступе для приобретения/продления VIP-статуса, просим обратиться в поддержку"
+      );
     } finally {
       setPurchaseLoading(false);
     }
@@ -212,15 +242,34 @@ const UserProfile = ({ userData, error }: UserProfileProps) => {
         <Dialog open={vipModalOpen} onClose={handleCloseVipModal}>
           <DialogTitle>Покупка VIP-статуса</DialogTitle>
           <DialogContent>
+            {downgradeDetails && (
+              <Alert severity="warning" style={{ marginBottom: 16 }}>
+                Новая категория VIP (
+                {
+                  vipOffers.find((o) => o.id === downgradeDetails.newCategory)
+                    ?.name
+                }
+                ) ниже текущей (
+                {
+                  vipOffers.find(
+                    (o) => o.id === downgradeDetails.currentCategory
+                  )?.name
+                }
+                ). Подтвердите покупку.
+              </Alert>
+            )}
             <FormControl fullWidth className={stylesProfile.vipSelect}>
               <InputLabel>Категория VIP</InputLabel>
               <Select
-                value={selectedVipCategory}
-                onChange={(e) => setSelectedVipCategory(e.target.value)}
+                value={selectedVipOffer}
+                onChange={(e) => setSelectedVipOffer(e.target.value)}
                 label="Категория VIP"
               >
-                <MenuItem value="Мещанин">Мещанин (30 дней, 500 ₽)</MenuItem>
-                <MenuItem value="Буржуй">Буржуй (30 дней, 1000 ₽)</MenuItem>
+                {vipOffers.map((offer) => (
+                  <MenuItem key={offer.id} value={offer.id}>
+                    {offer.name} ({offer.days} дней, {offer.price} ₽)
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
           </DialogContent>
@@ -232,9 +281,15 @@ const UserProfile = ({ userData, error }: UserProfileProps) => {
               onClick={handlePurchaseVip}
               color="primary"
               variant="contained"
-              disabled={!selectedVipCategory || purchaseLoading}
+              disabled={!selectedVipOffer || purchaseLoading}
             >
-              {purchaseLoading ? <CircularProgress size={24} /> : "Купить"}
+              {purchaseLoading ? (
+                <CircularProgress size={24} />
+              ) : downgradeDetails ? (
+                "Подтвердить"
+              ) : (
+                "Купить"
+              )}
             </Button>
           </DialogActions>
         </Dialog>
