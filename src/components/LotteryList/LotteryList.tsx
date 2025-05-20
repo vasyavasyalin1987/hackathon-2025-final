@@ -9,10 +9,12 @@ import {
   CircularProgress,
   Alert,
   Box,
+  Button,
 } from "@mui/material";
 import styles from "./LotteryList.module.scss";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import { API_BASE_URL } from "@/api";
+import { FillTicketModal } from "../FillTicketModal/FillTicketModal";
 
 const formatTime = (timeString: string) => {
   try {
@@ -43,10 +45,18 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const authToken = req.cookies.auth_token || "";
 
   try {
-    console.log('AUTH TOKEN', authToken);
+    if (!authToken) {
+      return {
+        props: {
+          initialTickets: [],
+          error: null,
+        },
+      };
+    }
+
     const response = await axios.get(`${API_BASE_URL}/api/current_tickets`, {
       headers: {
-        Authorization: `Bearer ${authToken}`,
+        Authorization: authToken,
       },
     });
 
@@ -82,9 +92,21 @@ const LotteryList = ({
   initialTickets,
   error,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const [selectedTicket, setSelectedTicket] = useState<any>(null);
+  const [modalOpen, setModalOpen] = useState(false);
   const [tickets] = useState(initialTickets || []);
   const [loading] = useState(false);
   const [errorMessage] = useState(error);
+
+  const handleOpenModal = (ticket: any) => {
+    setSelectedTicket(ticket);
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedTicket(null);
+    setModalOpen(false);
+  };
 
   if (loading) {
     return (
@@ -105,7 +127,10 @@ const LotteryList = ({
   if (tickets.length === 0) {
     return (
       <Container className={styles.emptyContainer}>
-        <Typography variant="h6">Не найдено активных лотерей.</Typography>
+        <Typography variant="h6">
+          Не найдено активных лотерей. Зарегистрируйтесь или авторизуйтесь чтобы
+          увидеть все лотереи.
+        </Typography>
       </Container>
     );
   }
@@ -124,33 +149,48 @@ const LotteryList = ({
                   Лотерея #{ticket.id}
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
-                  Generated: {formatDate(ticket.date_generated)}{" "}
+                  Сгенерировано: {formatDate(ticket.date_generated)}{" "}
                   {formatTime(ticket.time_generated)}
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
-                  Price: ${ticket.setting.price.toFixed(2)}
+                  Цена: {ticket.setting.price.toFixed(2)} ₽
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
-                  Time: {formatTime(ticket.setting.time)}
+                  Время: {formatTime(ticket.setting.time)}
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
-                  User Fill: {ticket.setting.count_fill_user}
+                  Чисел для выбора: {ticket.setting.count_fill_user}
                 </Typography>
                 <Box className={styles.numbersGrid}>
-                  <Typography variant="subtitle1">Numbers:</Typography>
+                  <Typography variant="subtitle1">Числа:</Typography>
                   <Grid container spacing={1}>
-                    {ticket.numbers.map((number: any, index: number) => (
+                    {ticket.numbers.map((number: any, index: any) => (
                       <Grid key={index}>
                         <Box className={styles.numberCircle}>{number}</Box>
                       </Grid>
                     ))}
                   </Grid>
                 </Box>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => handleOpenModal(ticket)}
+                  className={styles.fillButton}
+                >
+                  Заполнить билет
+                </Button>
               </CardContent>
             </Card>
           </Grid>
         ))}
       </Grid>
+      {selectedTicket && (
+        <FillTicketModal
+          open={modalOpen}
+          onClose={handleCloseModal}
+          ticket={selectedTicket}
+        />
+      )}
     </Container>
   );
 };
