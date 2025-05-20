@@ -1,0 +1,46 @@
+.card {
+    transition: transform 0.2s;
+
+    &:hover {
+        transform: translateY(-5px);
+    }
+}
+
+.cardTitle {
+    margin-bottom: 1rem;
+    color: #1976d2;
+}
+
+.numbersGrid {
+    margin-top: 1rem;
+}
+
+.numberCircle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background-color: #e0e0e0;
+    color: #333;
+    font-weight: bold;
+}
+
+.selectedNumber {
+    background-color: #1976d2;
+    color: white;
+}
+
+.winningNumber {
+    background-color: #4caf50;
+    color: white;
+}
+
+@media (max-width: 600px) {
+    .numberCircle {
+        width: 1.5rem;
+        height: 1.5rem;
+        font-size: 0.9rem;
+    }
+}

@@ -94,3 +94,37 @@
         font-size: 0.9rem;
     }
 }
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.headerActions {
+    display: flex;
+    gap: 1rem;
+}
+
+.viewAllButton,
+.myTicketsButton {
+    white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+    .header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .headerActions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .viewAllButton,
+    .myTicketsButton {
+        width: 100%;
+    }
+}
