@@ -1,27 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import styles from "./Header.module.scss";
 import bannerImageData from "@/assets/img/banner.jpg";
 import Image from "next/image";
 import { Registration } from "@/components/Auth/Registration";
 import { StolotoIcon } from "@/assets/icons/StolotoIcon/StolotoIcon";
 import Cookies from "js-cookie";
-import { useRouter } from "next/router"; // Импортируем useRouter
+import { useRouter } from "next/router";
+import Link from "next/link";
 
 export const Header = () => {
-  const router = useRouter(); // Инициализируем router
+  const router = useRouter();
   const [isAuthOpen, setAuthOpen] = useState(false);
   const [showDrop, setShowDrop] = useState(false);
   const [showDrop1, setShowDrop1] = useState(false);
   const [showMega, setShowMega] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [log, setLog] = useState<"logIn" | "logOut">("logIn");
-  const [user, setUser] = useState(null); // Состояние для хранения информации о пользователе
+  const [user, setUser] = useState(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const checkAuth = () => {
       if (Cookies.get("auth_token")) {
         setLog("logOut");
-        // Здесь можно добавить логику для получения данных о пользователе
       } else {
         setLog("logIn");
       }
@@ -61,9 +61,9 @@ export const Header = () => {
             </button>
             <ul>
               <li>
-                <a href="#" onClick={closeMenu}>
+                <Link href="/" onClick={closeMenu}>
                   Главная
-                </a>
+                </Link>
               </li>
               <li>
                 <a href="#" onClick={closeMenu}>
@@ -71,9 +71,9 @@ export const Header = () => {
                 </a>
               </li>
               <li className={styles.dropdown}>
-                <a href="#" className={styles.desktopItem}>
+                <Link href="/lotteries" className={styles.desktopItem}>
                   Лотереи
-                </a>
+                </Link>
                 <span
                   className={styles.mobileItem}
                   onClick={() => setShowDrop(!showDrop)}
@@ -86,7 +86,7 @@ export const Header = () => {
                   }`}
                 >
                   <li>
-                    <a href="#">Гибкое Бинго</a>
+                    <Link href="/lotteries">Гибкое Бинго</Link>
                   </li>
                   <li>
                     <a href="#">Лотерея-судоку</a>
@@ -100,9 +100,9 @@ export const Header = () => {
                 </ul>
               </li>
               <li className={styles.megaMenu}>
-                <a href="#" className={styles.desktopItem}>
+                <Link href="/" className={styles.desktopItem}>
                   Информация
-                </a>
+                </Link>
                 <span
                   className={styles.mobileItem}
                   onClick={() => setShowMega(!showMega)}
@@ -120,13 +120,13 @@ export const Header = () => {
                       <header>Как играть</header>
                       <ul className={styles.megaLinks}>
                         <li>
-                          <a href="#">Правила игры</a>
+                          <Link href="/rules">Правила игры</Link>
                         </li>
                         <li>
-                          <a href="#">Призовая структура</a>
+                          <Link href="/prizes">Призовая структура</Link>
                         </li>
                         <li>
-                          <a href="#">Выигрышные номера</a>
+                          <Link href="/win-nums">Выигрышные номера</Link>
                         </li>
                       </ul>
                     </div>
@@ -134,7 +134,7 @@ export const Header = () => {
                       <header>Мой аккаунт</header>
                       <ul className={styles.megaLinks}>
                         <li>
-                          <a href="#">Мои билеты</a>
+                          <Link href="/account/my-tickets">Мои билеты</Link>
                         </li>
                         <li>
                           <a href="#">Мои достижения</a>
@@ -156,7 +156,7 @@ export const Header = () => {
                         log === "logIn" ? setAuthOpen(true) : handleLogout()
                       }
                     >
-                      {log === "logIn" ? "Регистрация | Вход" : "Выйти"}
+                      {log === "logIn" ? "Регистрация | Вход" : "Мой аккаунт | Выйти"}
                     </a>
                     <span
                       className={styles.mobileItem}
@@ -171,7 +171,7 @@ export const Header = () => {
                         }`}
                       >
                         <li>
-                          <a href="#">Мои билеты</a>
+                          <Link href="/account/my-tickets">Мои билеты</Link>
                         </li>
                         <li>
                           <a href="#">Мои достижения</a>

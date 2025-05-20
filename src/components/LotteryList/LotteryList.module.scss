@@ -2,10 +2,21 @@
     padding: 2rem 0;
 }
 
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
 .title {
-    margin-bottom: 2rem !important;
+    margin-bottom: 0 !important;
     text-align: center;
     font-weight: bold;
+}
+
+.viewAllButton {
+    white-space: nowrap;
 }
 
 .card {
@@ -55,13 +66,26 @@
     height: 50vh;
 }
 
+.fillButton {
+    margin-top: 1rem !important;
+}
+
 @media (max-width: 600px) {
     .container {
         padding: 1rem;
     }
 
+    .header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
     .title {
         font-size: 1.5rem;
+    }
+
+    .viewAllButton {
+        width: 100%;
     }
 
     .numberCircle {
@@ -71,7 +95,36 @@
     }
 }
 
-.fillButton {
-    margin-top: 1rem !important;
-    width: 100%;
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.headerActions {
+    display: flex;
+    gap: 1rem;
+}
+
+.viewAllButton,
+.myTicketsButton {
+    white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+    .header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .headerActions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .viewAllButton,
+    .myTicketsButton {
+        width: 100%;
+    }
 }
