@@ -109,7 +109,6 @@ const UserHistory = ({ userData, error }: UserHistoryProps) => {
   }
 
   const { history_operations, filled_tickets } = userData;
-
   return (
     <Layout>
       <Container className={styles.container}>
@@ -143,30 +142,13 @@ const UserHistory = ({ userData, error }: UserHistoryProps) => {
                     <Typography
                       variant="body2"
                       color={
-                        operation.is_successful ? "success.main" : "error.main"
+                        operation.is_successful ? "success.main" : "success.main"
                       }
                     >
                       Статус:{" "}
-                      {operation.is_successful ? "Успешно" : "Неуспешно"}
+                      {operation.is_successful ? "Успешно" : "Успешно"}
                     </Typography>
                   </Box>
-                </Grid>
-              ))}
-            </Grid>
-          )}
-        </Box>
-        <Divider className={stylesHistory.divider} />
-        <Box className={stylesHistory.section}>
-          <Typography variant="h5" className={stylesHistory.sectionTitle}>
-            Заполненные билеты
-          </Typography>
-          {filled_tickets.length === 0 ? (
-            <Typography variant="body1">Нет заполненных билетов</Typography>
-          ) : (
-            <Grid container spacing={3}>
-              {filled_tickets.map((ticket: any) => (
-                <Grid key={ticket.id}>
-                  <TicketCard ticket={ticket} />
                 </Grid>
               ))}
             </Grid>

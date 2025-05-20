@@ -15,17 +15,12 @@ import axios from "axios";
 import styles from "./CreateLottery.module.scss";
 import { API_BASE_URL } from "@/api";
 import { SettingTicket } from "@/models/lottery";
+import Cookies from "js-cookie";
 
 const validationSchema = Yup.object({
-  size_x: Yup.number()
+  time: Yup.string()
     .required("Обязательное поле")
-    .min(4, "Число должно быть больше 3"),
-  size_y: Yup.number()
-    .required("Обязательное поле")
-    .min(4, "Число должно быть больше 3"),
-  count_number_row: Yup.number()
-    .required("Обязательное поле")
-    .min(1, "Число должно быть больше 0"),
+    .matches(/^\d{2}:\d{2}:\d{2}$/, "Формат времени должен быть HH:mm:ss"),
   price_ticket: Yup.number()
     .required("Обязательное поле")
     .min(1, "Число должно быть больше 0"),
@@ -33,31 +28,30 @@ const validationSchema = Yup.object({
     .required("Обязательное поле")
     .min(0, "Процент должен быть от 0 до 100")
     .max(100, "Процент должен быть от 0 до 100"),
-  time: Yup.number()
-    .required("Обязательное поле")
-    .min(1, "Число должно быть больше 0"),
+  is_start: Yup.boolean().required("Обязательное поле"),
+  count_number_row: Yup.array()
+    .of(Yup.number().min(1, "Число должно быть больше 0"))
+    .min(1, "Необходимо указать хотя бы одну строку")
+    .required("Обязательное поле"),
   count_fill_user: Yup.number()
     .required("Обязательное поле")
     .min(1, "Число должно быть больше 0"),
-  is_start: Yup.boolean().required("Обязательное поле"),
 });
 
 interface SettingTicketFormValues {
-  time: number | "";
-  price_ticket: number | "";
-  percent_fond: number | "";
+  time: string;
+  price_ticket: number;
+  percent_fond: number;
   is_start: boolean;
-  size_x: number | "";
-  size_y: number | "";
-  count_number_row: number | "";
-  count_fill_user: number | "";
+  count_number_row: number[];
+  count_fill_user: number;
 }
 
 interface CreateLotteryModalProps {
   open: boolean;
   onClose: () => void;
   settingTicketId?: number;
-  defaultValues?: SettingTicket; 
+  defaultValues?: SettingTicket;
 }
 
 export function CreateLotteryModal({
@@ -70,27 +64,26 @@ export function CreateLotteryModal({
   const [showWinInputs, setShowWinInputs] = useState(false);
   const [newWinCombination, setNewWinCombination] = useState<number>(0);
   const [newWinSum, setNewWinSum] = useState<number>(0);
+  const [rowInputs, setRowInputs] = useState<number[]>(
+    defaultValues?.count_number_row ?? [3]
+  );
 
   const initialValues: SettingTicketFormValues = defaultValues
     ? {
         time: defaultValues.time || "",
-        price_ticket: defaultValues.price_ticket || "",
-        percent_fond: defaultValues.percent_fond || "",
+        price_ticket: defaultValues.price_ticket || 0,
+        percent_fond: defaultValues.percent_fond || 0,
         is_start: defaultValues.is_start || false,
-        size_x: defaultValues.size_x || "",
-        size_y: defaultValues.size_y || "",
-        count_number_row: defaultValues.count_number_row || "",
-        count_fill_user: defaultValues.count_fill_user || "",
+        count_number_row: defaultValues.count_number_row || [3, 3, 3],
+        count_fill_user: defaultValues.count_fill_user || 0,
       }
     : {
-        time: "",
-        price_ticket: "",
-        percent_fond: "",
+        time: "00:15:00",
+        price_ticket: 0,
+        percent_fond: 0,
         is_start: false,
-        size_x: "",
-        size_y: "",
-        count_number_row: "",
-        count_fill_user: "",
+        count_number_row: [3, 3, 3],
+        count_fill_user: 0,
       };
 
   const addWin = (winCombination: number | undefined) => {
@@ -112,10 +105,27 @@ export function CreateLotteryModal({
     }
   };
 
+  const handleAddRowInput = () => {
+    setRowInputs((prev) => [...prev, 3]);
+  };
+
+  const handleRemoveRowInput = (index: number) => {
+    setRowInputs((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleRowInputChange = (index: number, value: number) => {
+    setRowInputs((prev) => {
+      const newRows = [...prev];
+      newRows[index] = value;
+      return newRows;
+    });
+  };
+
   const handleSubmit = async (
     values: SettingTicketFormValues,
     { resetForm }: any
   ) => {
+    const authToken = Cookies.get("auth_token");
     try {
       let response;
       if (settingTicketId) {
@@ -126,30 +136,39 @@ export function CreateLotteryModal({
             price_ticket: values.price_ticket || null,
             percent_fond: values.percent_fond || null,
             is_start: values.is_start,
-            size_x: values.size_x || null,
-            size_y: values.size_y || null,
-            count_number_row: values.count_number_row || null,
+            count_number_row: rowInputs,
             count_fill_user: values.count_fill_user || null,
+          },
+          {
+            headers: {
+              Authorization: authToken,
+            },
           }
         );
       } else {
-        response = await axios.post(`${API_BASE_URL}/api/setting_ticket`, {
-          time: values.time || null,
-          price_ticket: values.price_ticket || null,
-          percent_fond: values.percent_fond || null,
-          is_start: values.is_start,
-          size_x: values.size_x || null,
-          size_y: values.size_y || null,
-          count_number_row: values.count_number_row || null,
-          count_fill_user: values.count_fill_user || null,
-        });
+        response = await axios.post(
+          `${API_BASE_URL}/api/setting_ticket`,
+          {
+            time: values.time || null,
+            price_ticket: values.price_ticket || null,
+            percent_fond: values.percent_fond || null,
+            is_start: values.is_start,
+            count_number_row: rowInputs,
+            count_fill_user: values.count_fill_user || null,
+          },
+          {
+            headers: {
+              Authorization: authToken,
+            },
+          }
+        );
       }
 
       if (response.data.success) {
         alert(settingTicketId ? "Настройки обновлены!" : "Лотерея создана!");
-        console.log("Данные отправлены:", { ...values, winSum });
         resetForm();
         setWinSum({});
+        setRowInputs([3]);
         onClose();
       }
     } catch (error) {
@@ -187,33 +206,13 @@ export function CreateLotteryModal({
               <div className={styles.inputContainer}>
                 <Field
                   as={TextField}
-                  name="size_x"
-                  type="number"
-                  label="Ширина поля"
+                  name="time"
+                  type="text"
+                  label="Время (HH:mm:ss)"
                   className={styles.inputField}
-                  helperText={<ErrorMessage name="size_x" />}
+                  helperText={<ErrorMessage name="time" />}
                   size="small"
                 />
-                <Field
-                  as={TextField}
-                  name="size_y"
-                  type="number"
-                  label="Высота поля"
-                  className={styles.inputField}
-                  helperText={<ErrorMessage name="size_y" />}
-                  size="small"
-                />
-                <Field
-                  as={TextField}
-                  name="count_number_row"
-                  type="number"
-                  label="Количество билетов"
-                  className={styles.inputField}
-                  helperText={<ErrorMessage name="count_number_row" />}
-                  size="small"
-                />
-              </div>
-              <div className={styles.inputContainer}>
                 <Field
                   as={TextField}
                   name="price_ticket"
@@ -232,15 +231,6 @@ export function CreateLotteryModal({
                   helperText={<ErrorMessage name="percent_fond" />}
                   size="small"
                 />
-                <Field
-                  as={TextField}
-                  name="time"
-                  type="number"
-                  label="Время (минуты)"
-                  className={styles.inputField}
-                  helperText={<ErrorMessage name="time" />}
-                  size="small"
-                />
               </div>
               <div className={styles.inputContainer}>
                 <Field
@@ -252,6 +242,47 @@ export function CreateLotteryModal({
                   helperText={<ErrorMessage name="count_fill_user" />}
                   size="small"
                 />
+              </div>
+              <div className={styles.inputContainer}>
+                <Typography variant="subtitle1">
+                  Количество чисел в строках:
+                </Typography>
+                {rowInputs.map((row, index) => (
+                  <div key={index} className={styles.rowInput}>
+                    <TextField
+                      type="number"
+                      label={`Строка ${index + 1}`}
+                      value={row}
+                      onChange={(e) =>
+                        handleRowInputChange(index, Number(e.target.value))
+                      }
+                      className={styles.inputField}
+                      size="small"
+                      error={rowInputs[index] < 1}
+                      helperText={
+                        rowInputs[index] < 1 ? "Число должно быть больше 0" : ""
+                      }
+                    />
+                    {rowInputs.length > 1 && (
+                      <Button
+                        onClick={() => handleRemoveRowInput(index)}
+                        variant="outlined"
+                        size="small"
+                        color="error"
+                      >
+                        Удалить
+                      </Button>
+                    )}
+                  </div>
+                ))}
+                <Button
+                  startIcon={<AddIcon fontSize="small" />}
+                  onClick={handleAddRowInput}
+                  variant="outlined"
+                  size="small"
+                >
+                  Добавить строку
+                </Button>
               </div>
               <div className={styles.inputContainer}>
                 <FormControlLabel

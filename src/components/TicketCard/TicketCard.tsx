@@ -10,23 +10,24 @@ interface TicketCardProps {
     is_win: boolean;
     history_operation_id: number | null;
     generated_ticket: {
+      arr_number: number[];
+      arr_true_number: number[];
+      date_generated: string;
       id: number;
-      setting_ticket_id: number;
-      numbers: number[];
-      winning_numbers: number[] | null;
-      setting: {
-        id: number;
-        price: number;
-        count_number_row: number[];
-        count_fill_user: number;
-      } | null;
+      time_generated: string;
     } | null;
     history: {
       id: number;
       change: number;
       is_succesfull: boolean;
-      transaction_type: { id: number; naim: string } | null;
+      type_transaction: string;
     } | null;
+    setting: {
+      count_fill_user: number;
+      count_number_row: number[];
+      id: number;
+      price: number;
+    };
   };
 }
 
@@ -55,8 +56,8 @@ const formatDate = (dateString: string) => {
 };
 
 export const TicketCard = ({ ticket }: TicketCardProps) => {
-  const { generated_ticket, history } = ticket;
-  const { count_number_row } = generated_ticket?.setting || {
+  const { generated_ticket, history, setting } = ticket;
+  const { count_number_row } = setting || {
     count_number_row: [3, 3, 3],
   };
 
@@ -64,8 +65,10 @@ export const TicketCard = ({ ticket }: TicketCardProps) => {
   let currentIndex = 0;
   for (const rowSize of count_number_row) {
     numberGridRows.push(
-      generated_ticket?.numbers.slice(currentIndex, currentIndex + rowSize) ||
-        []
+      generated_ticket?.arr_number.slice(
+        currentIndex,
+        currentIndex + rowSize
+      ) || []
     );
     currentIndex += rowSize;
   }
@@ -80,10 +83,10 @@ export const TicketCard = ({ ticket }: TicketCardProps) => {
           Дата: {formatDate(ticket.date)} {formatTime(ticket.time)}
         </Typography>
         <Typography variant="body2" color="textSecondary">
-          Лотерея: #{generated_ticket?.id || "N/A"}
+          Лотерея: #{setting?.id || "N/A"}
         </Typography>
         <Typography variant="body2" color="textSecondary">
-          Цена: {generated_ticket?.setting?.price?.toFixed(2) || "N/A"} ₽
+          Цена: {setting?.price?.toFixed(2) || "N/A"} ₽
         </Typography>
         <Box sx={{ display: "flex", alignItems: "center", gap: "4px" }}>
           <Typography variant="body2" color="textSecondary">
@@ -96,8 +99,8 @@ export const TicketCard = ({ ticket }: TicketCardProps) => {
           />
         </Box>
         <Typography variant="body2" color="textSecondary">
-          Транзакция: {history?.is_succesfull ? "Успешно" : "Неуспешно"} (
-          {history?.transaction_type?.naim || "N/A"})
+          Транзакция: {history?.is_succesfull ? "Успешно" : "Успешно"} (
+          {history?.type_transaction ?? "N/A"})
         </Typography>
         <Box className={styles.numbersGrid}>
           <Typography variant="subtitle1">Выбранные числа:</Typography>
@@ -121,7 +124,7 @@ export const TicketCard = ({ ticket }: TicketCardProps) => {
             ))}
           </Grid>
         </Box>
-        {ticket.generated_ticket?.winning_numbers && (
+        {ticket.generated_ticket?.arr_true_number && (
           <Box className={styles.numbersGrid}>
             <Typography variant="subtitle1">Выигрышные числа:</Typography>
             <Grid container spacing={1}>
@@ -131,7 +134,7 @@ export const TicketCard = ({ ticket }: TicketCardProps) => {
                     <Grid key={cellIndex}>
                       <Box
                         className={`${styles.numberCircle} ${
-                          ticket.generated_ticket?.winning_numbers?.includes(
+                          ticket.generated_ticket?.arr_true_number?.includes(
                             number
                           )
                             ? styles.winningNumber

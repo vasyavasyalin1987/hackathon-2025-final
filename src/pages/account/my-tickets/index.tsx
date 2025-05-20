@@ -68,6 +68,7 @@ interface MyTicketsProps {
 
 const MyTickets = ({ initialTickets, error }: MyTicketsProps) => {
   const [tickets] = useState(initialTickets || []);
+  console.log(tickets);
   const [loading] = useState(false);
   const [errorMessage] = useState(error);
 

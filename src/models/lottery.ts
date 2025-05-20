@@ -9,12 +9,12 @@ export interface GeneratedTicket {
 
 export interface SettingTicket {
   id: number;
-  time: number | null;
-  price_ticket: number | null;
+  time: string;
+  price_ticket: number;
   percent_fond: number | null;
   is_start: boolean | null;
   size_x: number | null;
   size_y: number | null;
-  count_number_row: number | null;
+  count_number_row: number[] | null;
   count_fill_user: number | null;
 }

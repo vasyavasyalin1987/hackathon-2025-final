@@ -199,7 +199,7 @@ export const FillTicketModal = ({
       const response = await axios.post(
         `${API_BASE_URL}/api/filled_ticket`,
         {
-          id_generated_ticket: ticket.id,
+          id_setting_ticket: ticket.id,
           arr_number: selectedNumbers,
           multiplier: multiplier || 1,
           price_multiplier: multiplierFactors[multiplier || 1] ?? 1,

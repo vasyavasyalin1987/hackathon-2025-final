@@ -1,9 +1,9 @@
 .section {
-    margin-bottom: 2rem;
+    margin-bottom: 2rem !important;
 }
 
 .sectionTitle {
-    margin-bottom: 1rem;
+    margin-bottom: 1rem !important;
     color: #1976d2;
 }
 
@@ -20,7 +20,7 @@
 }
 
 .divider {
-    margin: 2rem 0;
+    margin: 2rem 0 !important;
 }
 
 @media (max-width: 600px) {
