@@ -33,7 +33,8 @@ export const Header = () => {
   const handleLogout = async () => {
     try {
       Cookies.remove("auth_token");
-      router.push("/");
+      await router.push("/");
+      window.location.reload();
     } catch (error) {
       console.error("Ошибка при выходе:", error);
     }
