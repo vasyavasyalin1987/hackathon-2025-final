@@ -1,16 +1,16 @@
-import Link from 'next/link'
-import styles from './GameRulesPreview.module.scss'
+import Link from "next/link";
+import styles from "./GameRulesPreview.module.scss";
 
 interface GameRulesPreviewProps {
-  srcImg: string
-  altImg: string
-  name: string
-  description: string
-  href?: string
+  srcImg: string;
+  altImg: string;
+  name: string;
+  description: string;
+  href?: string;
 }
 
 export default function GameRulesPreview(props: GameRulesPreviewProps) {
-  const { srcImg, altImg, name, description, href } = props
+  const { srcImg, altImg, name, description, href } = props;
 
   return (
     <div className={styles.gameRulesPreview}>
@@ -23,13 +23,13 @@ export default function GameRulesPreview(props: GameRulesPreviewProps) {
           <p>{description}</p>
         </div>
         <div className={styles.buttonContainer}>
-          {href ? (
-            <Link href={href} className={styles.button}>Читать больше</Link>
-          ) : (
-            <button className={styles.button} type="button">Читать больше</button>
+          {href && (
+            <Link href={href} className={styles.button}>
+              Читать больше
+            </Link>
           )}
         </div>
       </div>
     </div>
-  )
+  );
 }

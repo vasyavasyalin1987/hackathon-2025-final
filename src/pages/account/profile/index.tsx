@@ -159,9 +159,6 @@ const UserProfile = ({ userData, error }: UserProfileProps) => {
           </Typography>
           <Typography variant="body1">Логин: {account.login}</Typography>
           <Typography variant="body1">Роль: {account.role}</Typography>
-          <Typography variant="body1">
-            Почта: {account.mail || "Не указана"}
-          </Typography>
         </Box>
 
         <Box className={stylesProfile.section}>

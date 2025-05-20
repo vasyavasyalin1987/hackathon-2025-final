@@ -1,0 +1,40 @@
+.rulesContainer {
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+    color: #1976d2;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 16px !important;
+}
+
+.sectionTitle {
+    color: #333;
+    margin-top: 24px !important;
+    margin-bottom: 16px !important;
+}
+
+.divider {
+    margin: 16px 0 !important;
+    background-color: #1976d2;
+}
+
+.rulesList {
+    padding-left: 20px;
+    margin-bottom: 16px !important;
+
+    li {
+        margin-bottom: 12px !important;
+        line-height: 1.6;
+        font-size: 1rem;
+    }
+
+    ul {
+        padding-left: 20px;
+        margin-top: 8px !important;
+    }
+}

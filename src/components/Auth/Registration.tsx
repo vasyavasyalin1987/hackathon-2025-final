@@ -89,7 +89,7 @@ export const Registration: React.FC<RegistrationProps> = ({
           secure: true,
           sameSite: "strict",
         });
-        
+
         setSubmitting(false);
         resetForm();
         onClose();
