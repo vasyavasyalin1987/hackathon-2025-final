@@ -15,8 +15,8 @@ export const Header = () => {
   const [showDrop1, setShowDrop1] = useState(false);
   const [showMega, setShowMega] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [role, setRole] = useState("");
   const [log, setLog] = useState<"logIn" | "logOut">("logIn");
-  const [user, setUser] = useState(null);
 
   useLayoutEffect(() => {
     const checkAuth = () => {
@@ -25,6 +25,8 @@ export const Header = () => {
       } else {
         setLog("logIn");
       }
+
+      setRole(Cookies.get("auth_role") ?? "");
     };
 
     checkAuth();
@@ -33,6 +35,7 @@ export const Header = () => {
   const handleLogout = async () => {
     try {
       Cookies.remove("auth_token");
+      Cookies.remove("auth_role");
       await router.push("/");
       window.location.reload();
     } catch (error) {
@@ -133,15 +136,27 @@ export const Header = () => {
                     <div className={styles.row}>
                       <header>Мой аккаунт</header>
                       <ul className={styles.megaLinks}>
-                        <li>
-                          <Link href="/account/my-tickets">Мои билеты</Link>
-                        </li>
-                        <li>
-                          <Link href="/account/profile">Мой профиль</Link>
-                        </li>
-                        <li>
-                          <Link href="/account/history">История бонусов</Link>
-                        </li>
+                        {role === "Администратор" ? (
+                          <li>
+                            <Link href="/admin/lotteries">
+                              Управление лотереями
+                            </Link>
+                          </li>
+                        ) : (
+                          <>
+                            <li>
+                              <Link href="/account/my-tickets">Мои билеты</Link>
+                            </li>
+                            <li>
+                              <Link href="/account/profile">Мой профиль</Link>
+                            </li>
+                            <li>
+                              <Link href="/account/history">
+                                История бонусов
+                              </Link>
+                            </li>
+                          </>
+                        )}
                       </ul>
                     </div>
                   </div>
@@ -172,15 +187,27 @@ export const Header = () => {
                           showDrop1 ? styles.show : ""
                         }`}
                       >
-                        <li>
-                          <Link href="/account/my-tickets">Мои билеты</Link>
-                        </li>
-                        <li>
-                          <Link href="/account/profile">Мой профиль</Link>
-                        </li>
-                        <li>
-                          <Link href="/account/history">История бонусов</Link>
-                        </li>
+                        {role === "Администратор" ? (
+                          <li>
+                            <Link href="/admin/lotteries">
+                              Управление лотереями
+                            </Link>
+                          </li>
+                        ) : (
+                          <>
+                            <li>
+                              <Link href="/account/my-tickets">Мои билеты</Link>
+                            </li>
+                            <li>
+                              <Link href="/account/profile">Мой профиль</Link>
+                            </li>
+                            <li>
+                              <Link href="/account/history">
+                                История бонусов
+                              </Link>
+                            </li>
+                          </>
+                        )}
                       </ul>
                     )}
                   </div>

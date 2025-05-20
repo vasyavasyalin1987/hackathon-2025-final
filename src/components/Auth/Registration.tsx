@@ -84,6 +84,12 @@ export const Registration: React.FC<RegistrationProps> = ({
           sameSite: "strict",
         });
 
+        Cookies.set("auth_role", response.data.role, {
+          expires: 7,
+          secure: true,
+          sameSite: "strict",
+        });
+        
         setSubmitting(false);
         resetForm();
         onClose();

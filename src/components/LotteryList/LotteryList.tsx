@@ -110,7 +110,7 @@ const LotteryList = ({ initialTickets, error, maxItems }: LotteryListProps) => {
   };
 
   const displayedTickets = maxItems ? tickets.slice(0, maxItems) : tickets;
-
+  console.log(displayedTickets);
   if (loading) {
     return (
       <Container className={styles.loadingContainer}>
@@ -171,7 +171,10 @@ const LotteryList = ({ initialTickets, error, maxItems }: LotteryListProps) => {
                 </Typography>
                 {ticket.is_start && (
                   <Typography variant="body2" color="textSecondary">
-                    Статус: Началась
+                    Статус:{" "}
+                    {ticket.generated_tickets?.length
+                      ? "Завершилась"
+                      : "Началась"}
                   </Typography>
                 )}
                 <Box className={styles.numbersGrid}>
@@ -184,14 +187,16 @@ const LotteryList = ({ initialTickets, error, maxItems }: LotteryListProps) => {
                     ))}
                   </Grid>
                 </Box>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => handleOpenModal(ticket)}
-                  className={styles.fillButton}
-                >
-                  Заполнить билет
-                </Button>
+                {!ticket.generated_tickets?.length && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleOpenModal(ticket)}
+                    className={styles.fillButton}
+                  >
+                    Заполнить билет
+                  </Button>
+                )}
               </CardContent>
             </Card>
           </Grid>
