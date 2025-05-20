@@ -85,14 +85,16 @@ export const TicketCard = ({ ticket }: TicketCardProps) => {
         <Typography variant="body2" color="textSecondary">
           Цена: {generated_ticket?.setting?.price?.toFixed(2) || "N/A"} ₽
         </Typography>
-        <Typography variant="body2" color="textSecondary">
-          Статус:{" "}
+        <Box sx={{ display: "flex", alignItems: "center", gap: "4px" }}>
+          <Typography variant="body2" color="textSecondary">
+            Статус:{" "}
+          </Typography>
           <Chip
             label={ticket.is_win ? "Победа" : "Не выиграл"}
             color={ticket.is_win ? "success" : "default"}
             size="small"
           />
-        </Typography>
+        </Box>
         <Typography variant="body2" color="textSecondary">
           Транзакция: {history?.is_succesfull ? "Успешно" : "Неуспешно"} (
           {history?.transaction_type?.naim || "N/A"})
@@ -101,7 +103,7 @@ export const TicketCard = ({ ticket }: TicketCardProps) => {
           <Typography variant="subtitle1">Выбранные числа:</Typography>
           <Grid container spacing={1}>
             {numberGridRows.map((row, rowIndex) => (
-              <Grid container  spacing={1} key={rowIndex}>
+              <Grid container spacing={1} key={rowIndex}>
                 {row.map((number, cellIndex) => (
                   <Grid key={cellIndex}>
                     <Box

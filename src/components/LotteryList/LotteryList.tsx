@@ -35,15 +35,12 @@ const formatTime = (timeString: string) => {
   }
 };
 
-const formatDate = (dateString: string) => {
+const formatPrice = (priceString: string) => {
   try {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
+    const numericPrice = parseFloat(priceString.replace(/[^0-9.]/g, ""));
+    return numericPrice.toFixed(2);
   } catch {
-    return dateString;
+    return priceString;
   }
 };
 
@@ -67,10 +64,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       },
     });
 
-    if (response.data.success) {
+    if (response.data) {
       return {
         props: {
-          initialTickets: response.data.tickets,
+          initialTickets: response.data,
           error: null,
         },
       };
@@ -78,7 +75,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       return {
         props: {
           initialTickets: [],
-          error: response.data.message,
+          error: response.data?.message,
         },
       };
     }
@@ -164,22 +161,23 @@ const LotteryList = ({ initialTickets, error, maxItems }: LotteryListProps) => {
                   Лотерея #{ticket.id}
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
-                  Сгенерировано: {formatDate(ticket.date_generated)}{" "}
-                  {formatTime(ticket.time_generated)}
+                  Время: {formatTime(ticket.time)}
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
-                  Цена: {ticket.setting.price.toFixed(2)} ₽
+                  Цена: {formatPrice(ticket.price_ticket)} ₽
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
-                  Время: {formatTime(ticket.setting.time)}
+                  Чисел для выбора: {ticket.count_fill_user}
                 </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  Чисел для выбора: {ticket.setting.count_fill_user}
-                </Typography>
+                {ticket.is_start && (
+                  <Typography variant="body2" color="textSecondary">
+                    Статус: Началась
+                  </Typography>
+                )}
                 <Box className={styles.numbersGrid}>
                   <Typography variant="subtitle1">Числа:</Typography>
                   <Grid container spacing={1}>
-                    {ticket.numbers.map((number: any, index: any) => (
+                    {ticket.arr_number.map((number: number, index: number) => (
                       <Grid key={index}>
                         <Box className={styles.numberCircle}>{number}</Box>
                       </Grid>

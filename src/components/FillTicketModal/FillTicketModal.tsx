@@ -39,8 +39,22 @@ export const FillTicketModal = ({
   const [selectedLine, setSelectedLine] = useState<number[] | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const dragStart = useRef<number | null>(null);
-  const { setting } = ticket || {};
-  const { count_number_row, count_fill_user, price } = setting || {};
+
+  // Parse price_ticket (e.g., "$100.50" to 100.50)
+  const formatPrice = (priceString: string) => {
+    try {
+      return parseFloat(priceString.replace(/[^0-9.]/g, ""));
+    } catch {
+      return 0;
+    }
+  };
+
+  const price = ticket?.price_ticket ? formatPrice(ticket.price_ticket) : 0;
+  const count_number_row = ticket?.count_number_row || [3, 3, 3];
+  const count_fill_user = ticket?.count_fill_user || 5;
+  const arr_number =
+    ticket?.arr_number || Array.from({ length: 9 }, (_, i) => i + 1);
+
   const multiplierFactors: { [key: number]: number } = {
     1.25: 3.25,
     1.5: 4,
@@ -50,16 +64,16 @@ export const FillTicketModal = ({
   const adjustedPrice = multiplier
     ? price * multiplierFactors[multiplier]
     : price;
-  const totalNumbers = count_number_row
-    ? count_number_row.reduce((sum: number, num: number) => sum + num, 0)
-    : 9;
-  const numbers =
-    ticket?.numbers || Array.from({ length: totalNumbers }, (_, i) => i + 1);
-  const rows = count_number_row?.length || 3;
-  const cols = count_number_row ? Math.max(...count_number_row) : 3;
-  const numberGridRows: any[] = [];
+  const totalNumbers = count_number_row.reduce(
+    (sum: number, num: number) => sum + num,
+    0
+  );
+  const numbers = arr_number;
+  const rows = count_number_row.length;
+  const cols = Math.max(...count_number_row);
+  const numberGridRows: number[][] = [];
   let currentIndex = 0;
-  for (const rowSize of count_number_row || [3, 3, 3]) {
+  for (const rowSize of count_number_row) {
     numberGridRows.push(numbers.slice(currentIndex, currentIndex + rowSize));
     currentIndex += rowSize;
   }
@@ -74,7 +88,6 @@ export const FillTicketModal = ({
       for (let c = 0; c < count_number_row[r]; c++) {
         rowIndices.push(r * cols + c);
       }
-
       if (rowIndices.length >= 2) {
         lines[`h${r + 1}`] = rowIndices;
       }
@@ -88,7 +101,6 @@ export const FillTicketModal = ({
           colIndices.push(index);
         }
       }
-
       if (colIndices.length >= 2) {
         lines[`v${c + 1}`] = colIndices;
       }
@@ -102,7 +114,6 @@ export const FillTicketModal = ({
           diag1.push(index);
         }
       }
-
       if (diag1.length >= 2) {
         lines["d1"] = diag1;
       }
@@ -114,7 +125,6 @@ export const FillTicketModal = ({
           diag2.push(index);
         }
       }
-
       if (diag2.length >= 2) {
         lines["d2"] = diag2;
       }
@@ -189,9 +199,9 @@ export const FillTicketModal = ({
       const response = await axios.post(
         `${API_BASE_URL}/api/filled_ticket`,
         {
-          id_generated_ticket: ticket.setting_ticket_id,
+          id_generated_ticket: ticket.id,
           arr_number: selectedNumbers,
-          arr_multiplier: multiplier || 1,
+          multiplier: multiplier || 1,
           price_multiplier: multiplierFactors[multiplier || 1] ?? 1,
           arr_multiplier_number: selectedLine
             ? selectedLine.map((i) => numbers[i])
@@ -227,7 +237,7 @@ export const FillTicketModal = ({
           </Alert>
         )}
         <Typography variant="body1" gutterBottom>
-          Цена билета: {adjustedPrice?.toFixed(2)} ₽
+          Цена билета: {adjustedPrice.toFixed(2)} ₽
         </Typography>
         <FormControl fullWidth className={styles.multiplierSelect}>
           <InputLabel>Мультипликатор</InputLabel>
@@ -287,7 +297,7 @@ export const FillTicketModal = ({
                     className={styles.gridRow}
                   >
                     {row.map((number: number, cellIndex: number) => {
-                      const flatIndex = rowIndex * 3 + cellIndex;
+                      const flatIndex = rowIndex * cols + cellIndex;
                       return (
                         <Grid key={number}>
                           <Box
