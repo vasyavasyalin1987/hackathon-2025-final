@@ -69,9 +69,9 @@ export const Header = () => {
                 </Link>
               </li>
               <li>
-                <a href="#" onClick={closeMenu}>
+                <Link href="/broadcasts" onClick={closeMenu}>
                   Трансляции
-                </a>
+                </Link>
               </li>
               <li className={styles.dropdown}>
                 <Link href="/lotteries" className={styles.desktopItem}>
@@ -98,7 +98,7 @@ export const Header = () => {
                     <Link href="/mines">Лотерея-сапер</Link>
                   </li>
                   <li>
-                    <a href="#">Лотерея-тетрис</a>
+                    <Link href="/tetris-lottery">Лотерея-тетрис</Link>
                   </li>
                 </ul>
               </li>

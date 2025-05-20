@@ -14,18 +14,54 @@ const Footer = () => {
             </div>
             <div className={styles.content}>
               <p>
-                Пользовательское соглашение
+                <a
+                  className={styles.link}
+                  href="https://www.stoloto.ru/agreement?int=podval"
+                  target="_blank"
+                >
+                  Пользовательское соглашение
+                </a>
                 <br />
-                Правила программы лояльности
+                <a
+                  className={styles.link}
+                  href="https://www.stoloto.ru/files/documents/PL_20_05_2025.pdf?int=podval"
+                  target="_blank"
+                >
+                  Правила программы лояльности
+                </a>
                 <br />
-                Политика в отношении обработки персональных данных
+                <a
+                  className={styles.link}
+                  href="https://www.stoloto.ru/files/documents/politika_v_otnoshenii_obrabotki_personalnyh_dannyh_4.pdf?int=podval&siteversion=desktop"
+                  target="_blank"
+                >
+                  Политика в отношении обработки персональных данных
+                </a>
                 <br />
-                Положение о соблюдении антимонопольного законодательства АО «ТК
-                «Центр»
+                <a
+                  className={styles.link}
+                  href="https://www.stoloto.ru/files/documents/polozhenie_ob_amk_bez_prikaza.pdf?int=podval"
+                  target="_blank"
+                >
+                  Положение о соблюдении антимонопольного законодательства АО
+                  «ТК «Центр»
+                </a>
                 <br />
-                Политика Cookie
+                <a
+                  className={styles.link}
+                  href="https://www.stoloto.ru/files/documents/politika-ispolzovaniya-faylov-cookie_23.pdf?int=podval"
+                  target="_blank"
+                >
+                  Политика Cookie
+                </a>
                 <br />
-                Ответственная игра
+                <a
+                  className={styles.link}
+                  href="https://www.stoloto.ru/beresponsible?int=podval"
+                  target="_blank"
+                >
+                  Ответственная игра
+                </a>
               </p>
             </div>
             <div className={styles.icons}>
@@ -78,9 +114,9 @@ const Footer = () => {
               <h5 className={styles.title}>Главное</h5>
               <ul className={styles.linkList}>
                 <li className={styles.linkItem}>
-                  <a href="#" className={styles.link}>
+                  <Link href="/broadcasts" className={styles.link}>
                     Трансляции
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -103,9 +139,9 @@ const Footer = () => {
                   </Link>
                 </li>
                 <li className={styles.linkItem}>
-                  <a href="#" className={styles.link}>
+                  <Link href="/tetris-lottery" className={styles.link}>
                     Лотерея-тетрис
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
