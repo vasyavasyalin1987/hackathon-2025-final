@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { Header } from "../Header/Header";
 import Footer from "../Footer/Footer";
+import styles from "./Layout.module.scss";
 
 export interface ILayoutProps {
   children?: React.ReactNode;
@@ -16,7 +17,7 @@ export const Layout = ({ children }: ILayoutProps) => {
         />
       </Head>
       <Header />
-      {children}
+      <div className={styles.layout}>{children}</div>
       <Footer />
     </>
   );
