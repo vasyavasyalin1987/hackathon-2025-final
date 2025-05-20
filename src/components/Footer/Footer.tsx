@@ -98,9 +98,9 @@ const Footer = () => {
                   </Link>
                 </li>
                 <li className={styles.linkItem}>
-                  <a href="#" className={styles.link}>
+                  <Link href="/mines" className={styles.link}>
                     Лотерея-сапер
-                  </a>
+                  </Link>
                 </li>
                 <li className={styles.linkItem}>
                   <a href="#" className={styles.link}>

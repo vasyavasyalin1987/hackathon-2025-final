@@ -95,7 +95,7 @@ export const Header = () => {
                     <Link href="/sudoku-lottery">Лотерея-судоку</Link>
                   </li>
                   <li>
-                    <a href="#">Лотерея-сапер</a>
+                    <Link href="/mines">Лотерея-сапер</Link>
                   </li>
                   <li>
                     <a href="#">Лотерея-тетрис</a>
