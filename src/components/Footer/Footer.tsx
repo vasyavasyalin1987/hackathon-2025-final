@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./Footer.module.scss";
 import { StolotoIcon } from "@/assets/icons/StolotoIcon/StolotoIcon";
+import Link from "next/link";
 
 const Footer = () => {
   return (
@@ -87,9 +88,9 @@ const Footer = () => {
               <h5 className={styles.title}>Лотереи</h5>
               <ul className={styles.linkList}>
                 <li className={styles.linkItem}>
-                  <a href="#" className={styles.link}>
-                    Гибкое Бинго
-                  </a>
+                  <Link href="/lotteries" className={styles.link}>
+                    Гибкий Ряд
+                  </Link>
                 </li>
                 <li className={styles.linkItem}>
                   <a href="#" className={styles.link}>
@@ -112,24 +113,24 @@ const Footer = () => {
               <h5 className={styles.title}>Как играть</h5>
               <ul className={styles.linkList}>
                 <li className={styles.linkItem}>
-                  <a href="#" className={styles.link}>
+                  <Link href="/rules" className={styles.link}>
                     Правила игры
-                  </a>
+                  </Link>
                 </li>
                 <li className={styles.linkItem}>
-                  <a href="#" className={styles.link}>
+                  <Link href="/prizes" className={styles.link}>
                     Призовая структура
-                  </a>
+                  </Link>
                 </li>
                 <li className={styles.linkItem}>
-                  <a href="#" className={styles.link}>
+                  <Link href="/win-nums" className={styles.link}>
                     Выигрышные номера
-                  </a>
+                  </Link>
                 </li>
                 <li className={styles.linkItem}>
-                  <a href="#" className={styles.link}>
+                  <Link href="/contacts" className={styles.link}>
                     Контакты
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
