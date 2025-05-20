@@ -1,8 +1,34 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Layout } from "@/components/Layout/Layout";
 import styles from "@/styles/pages/Mines.module.scss";
+import axios from "axios";
+import { API_BASE_URL } from "@/api";
+import { GetServerSidePropsContext } from "next";
+import { Alert, Container } from "@mui/material";
+import Cookies from "js-cookie";
 
-export default function Mines() {
+interface UserProfileProps {
+  userData: any;
+  error: string | null;
+}
+
+interface HandleResponse {
+  success: boolean;
+  user: {
+    id_acc: number;
+    real_balance: number;
+    balance_virtual: number;
+  };
+  message: string;
+}
+
+export default function Mines({
+  userData: defaultUserData,
+  error,
+}: UserProfileProps) {
+  const userData = useRef(defaultUserData);
+  const [errorMessage, setErrorMessage] = useState(error);
+
   useEffect(() => {
     class Cell {
       type: string;
@@ -19,7 +45,9 @@ export default function Mines() {
         this.element = document.createElement("div");
         this.element.className = "cell";
 
-        this.element.addEventListener("click", () => game.handleCellClick(this));
+        this.element.addEventListener("click", () =>
+          game.handleCellClick(this)
+        );
       }
 
       open() {
@@ -69,16 +97,25 @@ export default function Mines() {
       height: number = 0;
       bonusChance: number = 0;
       mineChance: number = 0;
+      authToken: string;
 
-      init(settings: { width: number; height: number; bonusChance: number; mineChance: number }) {
-        // Инициализация параметров игры
+      constructor(authToken: string) {
+        this.authToken = authToken;
+      }
+
+      init(settings: {
+        width: number;
+        height: number;
+        bonusChance: number;
+        mineChance: number;
+      }) {
         this.width = settings.width;
         this.height = settings.height;
         this.bonusChance = settings.bonusChance;
         this.mineChance = settings.mineChance;
         this.steps = Math.floor(this.width * this.height * 0.6);
-        this.playerBonuses = 100;
-        this.playerCurrency = 100;
+        this.playerBonuses = userData.current.info.balance_virtual;
+        this.playerCurrency = userData.current.info.balance_real;
         this.cells = [];
         this.selectedCell = null;
         this.renderGrid();
@@ -152,12 +189,47 @@ export default function Mines() {
         if (currencyEl) currencyEl.textContent = this.playerCurrency.toString();
       }
 
-      finish() {
+      async finish() {
         screenManager.showScreen("results");
         const spentEl = document.getElementById("spent-bonuses");
         const earnedEl = document.getElementById("earned-currency");
-        if (spentEl) spentEl.textContent = (100 - this.playerBonuses).toString();
-        if (earnedEl) earnedEl.textContent = (this.playerCurrency - 100).toString();
+        if (spentEl)
+          spentEl.textContent = (100 - this.playerBonuses).toString();
+        if (earnedEl)
+          earnedEl.textContent = (this.playerCurrency - 100).toString();
+        try {
+          const response = await axios.post<HandleResponse>(
+            `${API_BASE_URL}/api/user/balance/update`,
+            {
+              real_balance: this.playerCurrency,
+              balance_virtual: this.playerBonuses,
+            },
+            {
+              headers: {
+                Authorization: this.authToken,
+              },
+            }
+          );
+
+          if (response.data.success) {
+            console.log("Баланс успешно обновлен:", response.data.user);
+          } else {
+            setErrorMessage(
+              response.data.message || "Ошибка при обновлении баланса"
+            );
+
+            userData.current.info.balance_virtual =
+              response.data.user.balance_virtual;
+            userData.current.info.balance_real =
+              response.data.user.real_balance;
+          }
+        } catch (error: any) {
+          console.error("Ошибка при обновлении баланса:", error);
+          setErrorMessage(
+            error.response?.data?.message ||
+              "Ошибка сервера при обновлении баланса"
+          );
+        }
       }
     }
 
@@ -185,11 +257,19 @@ export default function Mines() {
       }
     }
 
+    const authToken = Cookies.get("auth_token") ?? "";
+    const game = new Game(authToken);
+    const screenManager = new ScreenManager();
     const difficulties: {
       [key: string]: {
         name: string;
         desc: string;
-        settings: { width: number; height: number; bonusChance: number; mineChance: number };
+        settings: {
+          width: number;
+          height: number;
+          bonusChance: number;
+          mineChance: number;
+        };
       };
     } = {
       easy: {
@@ -215,9 +295,6 @@ export default function Mines() {
         settings: { width: 10, height: 7, bonusChance: 0.3, mineChance: 0.4 },
       },
     };
-
-    const game = new Game();
-    const screenManager = new ScreenManager();
 
     let selectedDifficulty = "easy";
     const diffButtons = document.querySelectorAll(".difficulty-button");
@@ -261,11 +338,25 @@ export default function Mines() {
     }
     const menuButton = document.getElementById("results-to-menu");
     if (menuButton) {
-      menuButton.addEventListener("click", () => screenManager.showScreen("menu"));
+      menuButton.addEventListener("click", () =>
+        screenManager.showScreen("menu")
+      );
     }
 
     screenManager.showScreen("menu");
-  }, []);
+  }, [userData]);
+
+  if (errorMessage || !userData) {
+    return (
+      <Layout>
+        <Container className={styles.errorContainer}>
+          <Alert severity="error">
+            {errorMessage || "Данные пользователя недоступны"}
+          </Alert>
+        </Container>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -273,16 +364,23 @@ export default function Mines() {
         <div id="menu" className={`visible screen ${styles.menuFlex}`}>
           <h4>Выбери сложность</h4>
           <div id="difficulty-buttons">
-            <button className="difficulty-button" data-diff="easy">Лёгкий</button>
-            <button className="difficulty-button" data-diff="classic">Классический</button>
-            <button className="difficulty-button" data-diff="lucky">Удача</button>
+            <button className="difficulty-button" data-diff="easy">
+              Лёгкий
+            </button>
+            <button className="difficulty-button" data-diff="classic">
+              Классический
+            </button>
+            <button className="difficulty-button" data-diff="lucky">
+              Удача
+            </button>
           </div>
           <div id="difficulty-info"></div>
         </div>
-
         <div id="game" className="screen">
           <div id="status">
-            Шаги: <span id="steps-count"></span> | 💎: <span id="bonus-count"></span> | 💰: <span id="currency-count"></span>
+            Шаги: <span id="steps-count"></span> | 💎:{" "}
+            <span id="bonus-count"></span> | 💰:{" "}
+            <span id="currency-count"></span>
           </div>
           <div id="controls">
             <button id="stay-on-cell">Остаться</button>
@@ -302,4 +400,53 @@ export default function Mines() {
       </div>
     </Layout>
   );
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const { req } = context;
+  const authToken = req.cookies.auth_token || "";
+
+  try {
+    if (!authToken) {
+      return {
+        props: {
+          userData: null,
+          error: "Пожалуйста, авторизуйтесь для просмотра профиля",
+        },
+      };
+    }
+
+    const response = await axios.get(`${API_BASE_URL}/api/user_info`, {
+      headers: {
+        Authorization: authToken,
+      },
+    });
+
+    if (response.data.success) {
+      return {
+        props: {
+          userData: response.data.user,
+          error: null,
+        },
+      };
+    } else {
+      return {
+        props: {
+          userData: null,
+          error:
+            response.data.message || "Не удалось получить данные пользователя",
+        },
+      };
+    }
+  } catch (error: any) {
+    console.error("Error fetching user info:", error);
+    return {
+      props: {
+        userData: null,
+        error:
+          error.response?.data?.message ||
+          "Ошибка сервера при получении данных",
+      },
+    };
+  }
 }
