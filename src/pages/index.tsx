@@ -1,11 +1,14 @@
 import { Layout } from "@/components/Layout/Layout";
-import { StolotoIconWOLetters } from
-    "@/assets/icons/StolotoIconWOLetters/StolotoIconWOLetters";
+import { StolotoIconWOLetters } from "@/assets/icons/StolotoIconWOLetters/StolotoIconWOLetters";
 import Value from "@/components/Value/Value";
-import { Values } from "@/constants/Values.constants"
-import styles from "@/styles/mainContainer.module.scss"
+import { Values } from "@/constants/Values.constants";
+import styles from "@/styles/mainContainer.module.scss";
+import * as LotteryList from "@/components/LotteryList/LotteryList";
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 
-export default function Home() {
+export default function Home({
+  ...props
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <Layout>
       <div className={styles.mainContainer}>
@@ -22,21 +25,19 @@ export default function Home() {
               современные технологии, благодаря которым каждый может выбрать
               подходящий ему способ участия в лотереях, а каждый желающий —
               смотреть розыгрыши лотерей в прямом эфире или лично приехать в
-              единственный в мире лотерейный центр и своими глазами увидеть,
-              как формируется выигрышная комбинация.
+              единственный в мире лотерейный центр и своими глазами увидеть, как
+              формируется выигрышная комбинация.
             </p>
           </div>
           <div className={styles.logo}>
             <StolotoIconWOLetters />
           </div>
         </div>
-
         <div className={styles.values}>
           <Value {...Values[0]} />
           <Value {...Values[1]} />
           <Value {...Values[2]} />
         </div>
-
         <div className={styles.mission}>
           <h3>Наша миссия</h3>
           <p>
@@ -48,6 +49,11 @@ export default function Home() {
           </p>
         </div>
       </div>
+      <LotteryList.default {...props} />
     </Layout>
   );
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  return await LotteryList.getServerSideProps(context);
 }
