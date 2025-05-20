@@ -203,7 +203,6 @@ export default function SudokuLottery() {
       return true;
     };
 
-    // Проверка строк
     for (let r = 0; r < SIZE; r++) {
       const cells: [number, number][] = [];
       for (let c = 0; c < SIZE; c++) {
@@ -215,7 +214,6 @@ export default function SudokuLottery() {
       }
     }
 
-    // Проверка столбцов
     for (let c = 0; c < SIZE; c++) {
       const cells: [number, number][] = [];
       for (let r = 0; r < SIZE; r++) {
@@ -227,7 +225,6 @@ export default function SudokuLottery() {
       }
     }
 
-    // Проверка блоков
     for (let br = 0; br < 3; br++) {
       for (let bc = 0; bc < 3; bc++) {
         const cells: [number, number][] = [];
@@ -243,7 +240,6 @@ export default function SudokuLottery() {
       }
     }
 
-    // Проверка полного заполнения
     let isComplete = true;
     outer: for (let r = 0; r < SIZE; r++) {
       for (let c = 0; c < SIZE; c++) {
@@ -265,7 +261,6 @@ export default function SudokuLottery() {
     }
   };
 
-  // Если сетка не готова, показываем индикатор загрузки
   if (grid.length !== SIZE) {
     return (
       <Layout>
@@ -280,7 +275,7 @@ export default function SudokuLottery() {
   return (
     <Layout>
       <div className={styles.sudokuLottery}>
-        <h1 className={styles.title}>Судоку‑Лотерея PRO</h1>
+        <h4 className={styles.title}>Судоку‑Лотерея PRO</h4>
         <div className={styles.balancePanel}>
           <div>
             Бонусы: <span>{bonusBalance}</span>
